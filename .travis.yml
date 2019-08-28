@@ -1,0 +1,16 @@
+dist: bionic
+language: python
+python:
+  - "3.6"
+  - "3.7"
+before_install:
+  - pip install pipfile-requirements==0.1.0.post0
+  - pipfile2req -d Pipfile.lock > Requirements.txt
+install:
+  - pip install -r Requirements.txt
+script:
+  - isort -c
+  - black --check --line-length=90 --target-version=py36 .
+  - pyroma .
+  - pylint --rcfile=setup.cfg paneldata_pipeline tests
+  - pytest -rf --cov

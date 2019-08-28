@@ -1,0 +1,40 @@
+repos:
+  - repo: local
+    hooks:
+      - id: isort
+        name: sort python imports
+        entry: isort --settings-path setup.cfg
+        language: system
+        files: '.*\.py'
+        pass_filenames: true
+      - id: black
+        name: black (format)
+        entry: black
+        args: ["--line-length", "90"]
+        language: system
+        files: '.*\.py'
+        pass_filenames: true
+      - id: pyroma
+        name: check setup.py
+        entry: pyroma .
+        language: system
+        files: "setup.py"
+        pass_filenames: true
+      - id: unittest
+        name: run unittests
+        entry: pytest -v
+        language: system
+        files: '.*\.py'
+        pass_filenames: false
+      - id: pylint
+        name: lint python code (pylint)
+        entry: pylint --rcfile=setup.cfg
+        language: system
+        files: '.*\.py'
+        pass_filenames: true
+      - id: bandit
+        name: check python security (bandit)
+        entry: bandit
+        language: system
+        files: '.*\.py'
+        pass_filenames: true
