@@ -1,0 +1,3 @@
+study,name,label,label_de,description,description_de,parent
+some-study,some-topic,some-topic,some-topic,,,,
+some-study,some-subtopic,some-subtopic,some-subtopic,,,some-topic

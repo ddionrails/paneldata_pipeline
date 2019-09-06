@@ -8,7 +8,7 @@ from paneldata_pipeline.questions import preprocess_questions
 
 
 def test_preprocess_questions():
-    """Test preprocessing of test data in tests/test_data"""
+    """Test preprocessing of questions and answers data in tests/test_data"""
     # all instruments are stored in "result"
     result = [
         instrument[1] for instrument in preprocess_questions(Path("tests/test_data"))
