@@ -1,0 +1,30 @@
+[
+  {
+    "study": "some-study",
+    "instrument": "some-instrument",
+    "name": "some-question",
+    "label": "some-text",
+    "sn": 0,
+    "items": [
+      {
+        "answers": [
+          {
+            "label": "Yes",
+            "label_de": "Ja",
+            "value": 1
+          },
+          {
+            "label": "No",
+            "label_de": "Nein",
+            "value": 2
+          }
+        ],
+        "name": "some-item",
+        "scale": "some-scale",
+        "sn": 0,
+        "text": "some-text",
+        "text_de": "some-text-de"
+      }
+    ]
+  }
+]

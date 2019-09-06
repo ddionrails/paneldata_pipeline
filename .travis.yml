@@ -9,6 +9,7 @@ before_install:
   - export PATH=${PATH}:$(pwd)
 install:
   - pip install -r Requirements.txt
+  - pip install -e .
 script:
   - isort -c
   - black --check --line-length=90 --target-version=py36 .

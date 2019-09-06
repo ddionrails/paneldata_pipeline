@@ -10,7 +10,10 @@ setup(
         "License :: OSI Approved :: BSD License",
     ],
     description="Process data for the import into a ddionrails instance.",
-    install_requires=[],
+    entry_points={
+        "console_scripts": ["paneldata_pipeline = paneldata_pipeline.__main__:main"]
+    },
+    install_requires=["click", "pandas >= 0.25.0"],
     keywords=["preprocessing", "ddionrails", "paneldata", "csv", "humanities"],
     long_description=open("./README.md").read(),
     name="paneldata_pipeline",
