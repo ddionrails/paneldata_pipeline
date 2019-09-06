@@ -10,6 +10,14 @@ import click
 from .questions import preprocess_questions
 
 
+def link_to(origin: Path, target: Path) -> None:
+    """ Creates a symlink at 'target' which points to 'origin' """
+    try:
+        target.symlink_to(origin)
+    except FileExistsError:
+        pass
+
+
 def setup_paths(input_path: str, output_path: str) -> Tuple[Path, Path]:
     """Returns pathlib.Path objects (and creates output_path if necessary)."""
     output_path = Path(output_path)
@@ -21,6 +29,33 @@ def setup_paths(input_path: str, output_path: str) -> Tuple[Path, Path]:
 @click.group()
 def main() -> None:
     """paneldata-pipeline CLI"""
+
+
+@main.command()
+@click.argument("input_path", type=click.Path(exists=True))
+@click.argument("output_path", type=click.Path())
+def symlink(input_path: str, output_path: str) -> None:
+    """Create symlinks."""
+    input_path, output_path = setup_paths(input_path, output_path)
+    allowed = {
+        "analysis_units",
+        "answers",
+        "attachments",
+        "concepts",
+        "conceptual_datasets",
+        "datasets",
+        "instruments",
+        "periods",
+        "publications",
+        "questions",
+        "study",
+        "topics",
+        "variables",
+    }
+    for file in input_path.glob("*.[cm][sd][v]"):
+        if file.stem in allowed:
+            target = output_path.joinpath(file.name)
+            link_to(file, target)
 
 
 @main.command()
