@@ -8,6 +8,7 @@ from typing import Tuple
 import click
 
 from .questions import preprocess_questions
+from .transformations import preprocess_transformations
 
 
 def setup_paths(input_path: str, output_path: str) -> Tuple[Path, Path]:
@@ -33,3 +34,13 @@ def questions(input_path: str, output_path: str) -> None:
         filename = output_path.joinpath(instrument_name).with_suffix(".json")
         with open(str(filename), "w") as outfile:
             json.dump(instrument_list, outfile, indent=2)
+
+
+@main.command()
+@click.argument("input_path", type=click.Path(exists=True))
+@click.argument("output_path", type=click.Path())
+@click.option("-v", "--verbose", is_flag=True, default=False)
+def transformations(input_path: str, output_path: str, verbose: bool = False) -> None:
+    """Preprocess transformations."""
+    input_path, output_path = setup_paths(input_path, output_path)
+    transformations = preprocess_transformations(input_path, verbose)
