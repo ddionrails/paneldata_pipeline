@@ -13,3 +13,5 @@ pytest-cov = "*"
 
 [packages]
 paneldata-pipeline = {editable = true,path = "."}
+pandas = "*"
+bandit = "*"

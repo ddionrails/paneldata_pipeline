@@ -1,0 +1,82 @@
+{
+  "study": "test-study",
+  "questionnaire": "some-questionnaire",
+  "label": "The english label",
+  "period": 2018,
+  "author": "SOEP Group",
+  "label_de": "Das deutsche Label ÖÄÜß",
+  "publish": 1,
+  "qtyp": "vp",
+  "instrument": "some-questionnaire",
+  "questions": {
+    "14": {
+      "question": 14,
+      "name": 14,
+      "label": "Do You test?",
+      "items": [
+        {
+          "item": "vpfleg",
+          "text_de": "Testen Sie?",
+          "instruction_de": "Denken Sie darüber nach",
+          "text": "Do You test?",
+          "instruction": "Think about this",
+          "scale": "cat",
+          "answer_list": "1+",
+          "concept": "vpfleg",
+          "filter": "8:1=2",
+          "goto": "1@16",
+          "description": "Some Description",
+          "answers": [
+            {
+              "value": 1,
+              "label_de": "Ja",
+              "label": "Yes"
+            },
+            {
+              "value": 2,
+              "label_de": "Nein",
+              "label": "No"
+            }
+          ],
+          "sn": 0,
+          "number": ""
+        }
+      ],
+      "sn": 0,
+      "instrument": "some-questionnaire",
+      "study": "test-study"
+    },
+    "1": {
+      "question": 1,
+      "name": 1,
+      "label": "(Sex)",
+      "items": [
+        {
+          "item": "vsex",
+          "text_de": "(Geschlecht)",
+          "text": "(Sex)",
+          "scale": "cat",
+          "answer_list": "869+",
+          "concept": "vsex",
+          "answers": [
+            {
+              "value": 1,
+              "label_de": "Männlich",
+              "label": "Male"
+            },
+            {
+              "value": 2,
+              "label_de": "Weiblich",
+              "label": "Female"
+            }
+          ],
+          "sn": 0,
+          "number": ""
+        }
+      ],
+      "sn": 1,
+      "instrument": "some-questionnaire",
+      "study": "test-study"
+    }
+  }
+}
