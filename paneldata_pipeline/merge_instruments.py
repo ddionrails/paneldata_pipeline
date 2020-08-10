@@ -3,7 +3,6 @@ import json
 import os
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict
 
 import pandas
 
@@ -19,7 +18,7 @@ def read_tables(name):
 
 def import_tables():
     tables = OrderedDict(
-        questionnaires=pd.read_csv("metadata/questionnaires.csv"),
+        questionnaires=pandas.read_csv("metadata/questionnaires.csv"),
         questions=read_tables("questions.csv"),
         answers=read_tables("answers.csv"),
     )
@@ -28,12 +27,12 @@ def import_tables():
 
 def get_answers(tables):
     answers = OrderedDict()
-    for i, answer in tables["answers"].iterrows():
+    for _, answer in tables["answers"].iterrows():
         answer = OrderedDict(answer.dropna())
-        key = (answer["questionnaire"], answer["answer_list"])
-        if not key in answers:
+        key = (answer["instrument"], answer["answer_list"])
+        if key not in answers:
             answers[key] = list()
-        _clean_x(answer)
+        _clean_row(answer)
         answers[key].append(answer)
     return answers
 
@@ -42,9 +41,10 @@ def get_instruments(tables):
     instrument_list = [
         OrderedDict(row.dropna()) for i, row in tables["questionnaires"].iterrows()
     ]
-    instruments = OrderedDict([(x["questionnaire"], x) for x in instrument_list])
+    instruments = OrderedDict([(x["name"], x) for x in instrument_list])
+
     for instrument in instruments.values():
-        instrument["instrument"] = instrument["questionnaire"]
+        instrument["instrument"] = instrument["name"]
         instrument["questions"] = OrderedDict()
     return instruments
 
@@ -52,37 +52,37 @@ def get_instruments(tables):
 def fill_questions(tables, instruments, answers):
     for _, question_row in tables["questions"].iterrows():
         question_row.dropna(inplace=True)
-        instrument_name = question_row["questionnaire"]
-        question_name = question_row["question"]
+        study_name = question_row["study"]
+        instrument_name = question_row["instrument"]
+        question_name = question_row["name"]
         if "item" in question_row.keys():
             item_name = question_row["item"]
         else:
             item_name = "root"
         if not instrument_name in instruments:
             instruments[instrument_name] = OrderedDict(
-                instrument=instrument_name, questions=OrderedDict()
+                study=study_name, instrument=instrument_name, questions=OrderedDict()
             )
         instrument_questions = instruments[instrument_name]["questions"]
         if not question_name in instrument_questions:
             question = OrderedDict()
             question["question"] = question_name
             question["name"] = question_name
-            if not "label" in question and "text" in question_row:
+            if "label" not in question and "text" in question_row:
                 question["label"] = question_row["text"]
             question["items"] = OrderedDict()
             question["sn"] = len(instrument_questions)
-            question["instrument"] = question_row["questionnaire"]
+            question["instrument"] = question_row["instrument"]
             question["study"] = question_row["study"]
             instrument_questions[question_name] = question
         question_items = instrument_questions[question_name]["items"]
-        try:
-            key = (question_row["questionnaire"], question_row["answer_list"])
-            question_row["answers"] = answers[key]
-        except:
-            pass
+        key = (question_row["instrument"], question_row["answer_list"])
+        question_row["answers"] = answers[key]
         question_row["sn"] = len(question_items)
-        _clean_x(question_row)
-        question_items[item_name] = question_row.to_dict()
+        _clean_row(question_row)
+        question_dict = question_row.to_dict()
+        question_dict.pop("name", None)
+        question_items[item_name] = question_dict
     for _, instrument in instruments.items():
         for _, question in instrument["questions"].items():
             qitems = question["items"]
@@ -95,14 +95,14 @@ def fill_questions(tables, instruments, answers):
     return instruments
 
 
-def _clean_x(x):
-    del x["study"]
-    del x["questionnaire"]
-    if "answer_list" in x and not "question" in x:
-        del x["answer_list"]
-    if "question" in x:
-        del x["question"]
-    return x
+def _clean_row(row):
+    del row["study"]
+    del row["instrument"]
+    if "answer_list" in row and not "question" in row:
+        del row["answer_list"]
+    if "question" in row:
+        del row["question"]
+    return row
 
 
 def write_json(instruments, output_folder: Path):
@@ -110,8 +110,8 @@ def write_json(instruments, output_folder: Path):
         os.mkdir(output_folder)
 
     for instrument_name, instrument in instruments.items():
-        with open(output_folder.joinpath(f"{instrument_name}.json"), "w") as f:
-            json.dump(instrument, f, indent=2, ensure_ascii=False)
+        with open(output_folder.joinpath(f"{instrument_name}.json"), "w") as json_file:
+            json.dump(instrument, json_file, indent=2, ensure_ascii=False)
 
 
 def main(
@@ -120,7 +120,7 @@ def main(
 ):
     tables = OrderedDict(
         questionnaires=pandas.read_csv(
-            input_folder.joinpath("questionnaires.csv"), encoding="utf-8"
+            input_folder.joinpath("instruments.csv"), encoding="utf-8"
         ),
         questions=pandas.read_csv(
             input_folder.joinpath("questions.csv"), encoding="utf-8"
@@ -140,4 +140,4 @@ def main(
 
 
 if __name__ == "__main__":
-    instruments = main(export_yaml=True)
+    main()

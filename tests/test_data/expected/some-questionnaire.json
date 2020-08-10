@@ -1,28 +1,25 @@
 {
   "study": "test-study",
-  "questionnaire": "some-questionnaire",
+  "name": "some-questionnaire",
   "label": "The english label",
   "period": 2018,
   "author": "SOEP Group",
   "label_de": "Das deutsche Label ÖÄÜß",
-  "publish": 1,
-  "qtyp": "vp",
   "instrument": "some-questionnaire",
   "questions": {
-    "14": {
-      "question": 14,
-      "name": 14,
+    "vtest": {
+      "question": "vtest",
+      "name": "vtest",
       "label": "Do You test?",
       "items": [
         {
-          "item": "vpfleg",
+          "item": "14",
           "text_de": "Testen Sie?",
           "instruction_de": "Denken Sie darüber nach",
           "text": "Do You test?",
           "instruction": "Think about this",
           "scale": "cat",
-          "answer_list": "1+",
-          "concept": "vpfleg",
+          "concept": "vtest",
           "filter": "8:1=2",
           "goto": "1@16",
           "description": "Some Description",
@@ -46,17 +43,16 @@
       "instrument": "some-questionnaire",
       "study": "test-study"
     },
-    "1": {
-      "question": 1,
-      "name": 1,
+    "vsex": {
+      "question": "vsex",
+      "name": "vsex",
       "label": "(Sex)",
       "items": [
         {
-          "item": "vsex",
+          "item": "1",
           "text_de": "(Geschlecht)",
           "text": "(Sex)",
           "scale": "cat",
-          "answer_list": "869+",
           "concept": "vsex",
           "answers": [
             {
