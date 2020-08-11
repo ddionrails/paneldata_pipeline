@@ -7,18 +7,18 @@ from collections import OrderedDict
 
 import pandas as pd
 
-from questions_variables import create_indirect_links_recursive
-
-# load variables for filtering
-variables = pd.read_csv("ddionrails/variables.csv")
-variables["compare"] = variables["dataset_name"].astype(str) + variables[
-    "variable_name"
-].astype(str)
+from paneldata_pipeline.questions_variables import create_indirect_links_recursive
 
 
 def preprocess_transformations(
     filename: pathlib.Path, study: str, version: str, verbose: bool = False
 ) -> pd.DataFrame:
+    # load variables for filtering
+    variables = pd.read_csv("ddionrails/variables.csv")
+    variables["compare"] = variables["dataset_name"].astype(str) + variables[
+        "variable_name"
+    ].astype(str)
+
     columns = OrderedDict(
         [
             ("input_study", "origin_study_name"),

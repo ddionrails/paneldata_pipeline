@@ -1,13 +1,11 @@
 import pathlib
-import shutil
-from collections import OrderedDict
 
 import pandas
 
-from merge_instruments import main as merge_instruments
-from questions_variables import questions_from_generations
-from topics import TopicParser
-from transformations import preprocess_transformations
+from paneldata_pipeline.merge_instruments import main as merge_instruments
+from paneldata_pipeline.questions_variables import questions_from_generations
+from paneldata_pipeline.topics import TopicParser
+from paneldata_pipeline.transformations import preprocess_transformations
 
 STUDY = "soep-core"
 VERSION = "v35"
@@ -20,12 +18,12 @@ def create_questions_from_generations(
     version: str,
     logical_variables_path: str = "metadata/logical_variables.csv",
     generations_path: str = "metadata/generations.csv",
-) -> pd.DataFrame:
+) -> pandas.DataFrame:
 
     # The file "logical_variables.csv" contains direct links between variables and questions
     # variable1 <relates to> question1
 
-    logical_variables = pd.read_csv(logical_variables_path)
+    logical_variables = pandas.read_csv(logical_variables_path)
     RENAME_COLUMNS = {
         "study": "study_name",
         "dataset": "dataset_name",
@@ -44,7 +42,7 @@ def create_questions_from_generations(
 
     # Read input and output version columns as type "string"
     DTYPE_SETTINGS = {"input_version": str, "output_version": str}
-    generations = pd.read_csv(generations_path, dtype=DTYPE_SETTINGS)
+    generations = pandas.read_csv(generations_path, dtype=DTYPE_SETTINGS)
     updated_generations = create_indirect_links_recursive(generations)
 
     # Remove rows when output version is not the specified version
@@ -102,18 +100,14 @@ def concepts():
     _concepts.to_csv("ddionrails/concepts.csv", index=False)
 
 
-def main():
+def main(input_folder: pathlib.Path, output_folder: pathlib.Path):
     questions_from_generations(VERSION)
-    merge_instruments()
+    merge_instruments(input_folder=input_folder, output_folder=output_folder)
     TopicParser(
-        topics_input_csv="ddionrails/topics.csv",
-        concepts_input_csv="ddionrails/concepts.csv",
+        topics_input_csv=output_folder.joinpath("topics.csv"),
+        concepts_input_csv=output_folder.joinpath("concepts.csv"),
     ).to_json()
     transformations = preprocess_transformations(
         INPUT_DIRECTORY.joinpath("generations.csv"), STUDY, VERSION
     )
     transformations.to_csv(OUTPUT_DIRECTORY.joinpath("transformations.csv"), index=False)
-
-
-if __name__ == "__main__":
-    main()

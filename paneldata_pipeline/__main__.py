@@ -2,14 +2,17 @@
 
 import argparse
 from pathlib import Path
+from typing import Dict
+
+from paneldata_pipeline.fill_ddionrails import main as fill_ddionrails
 
 
 def main():
     """ Entrypoint of the package. """
-    pass  # pylint: disable=unnecessary-pass
+    fill_ddionrails(**parse_arguments())
 
 
-def parse_arguments():
+def parse_arguments() -> Dict[str, Path]:
     """Setup arguments and parse them."""
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input-folder", dest="input_folder", help="Path to the ")

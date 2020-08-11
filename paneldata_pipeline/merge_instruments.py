@@ -137,7 +137,3 @@ def main(
         os.remove(_file)
     write_json(instruments, output_folder)
     return instruments
-
-
-if __name__ == "__main__":
-    main()
