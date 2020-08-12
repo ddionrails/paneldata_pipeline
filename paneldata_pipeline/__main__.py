@@ -15,11 +15,24 @@ def main():
 def parse_arguments() -> Dict[str, Path]:
     """Setup arguments and parse them."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input-folder", dest="input_folder", help="Path to the ")
-    parser.add_argument("-o", "--output-folder", dest="output_folder")
+    parser.add_argument("-i", "--input-folder", help="Path to the ", type=_full_path)
+    parser.add_argument("-o", "--output-folder", type=_full_path)
+    parser.add_argument("-r", "--variable-relations", action="store_true", default=False)
+    parser.add_argument(
+        "-u", "--unify-instrument-data", action="store_true", default=False
+    )
+    parser.add_argument("-q", "--question-relations", action="store_true", default=False)
+    parser.add_argument(
+        "-g",
+        "--generate-topic-tree",
+        dest="topic_tree",
+        action="store_true",
+        default=False,
+    )
     _parsed_arguments = parser.parse_args()
 
-    return {
-        "input_folder": Path(_parsed_arguments.input_folder).resolve(),
-        "output_folder": Path(_parsed_arguments.output_folder).resolve(),
-    }
+    return vars(_parsed_arguments)
+
+
+def _full_path(path: str) -> Path:
+    return Path(path).resolve()
