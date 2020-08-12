@@ -3,6 +3,7 @@ import json
 import os
 from collections import OrderedDict
 from pathlib import Path
+from typing import Dict
 
 import pandas
 
@@ -114,10 +115,10 @@ def write_json(instruments, output_folder: Path):
             json.dump(instrument, json_file, indent=2, ensure_ascii=False)
 
 
-def main(
+def merge_instruments(
     input_folder=Path("metadata").absolute(),
     output_folder=Path("ddionrails/instruments").absolute(),
-):
+) -> Dict:
     tables = OrderedDict(
         questionnaires=pandas.read_csv(
             input_folder.joinpath("instruments.csv"), encoding="utf-8"

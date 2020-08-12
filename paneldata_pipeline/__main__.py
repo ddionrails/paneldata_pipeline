@@ -4,12 +4,28 @@ import argparse
 from pathlib import Path
 from typing import TypedDict
 
-from paneldata_pipeline.fill_ddionrails import main as fill_ddionrails
+from paneldata_pipeline.merge_instruments import merge_instruments
+from paneldata_pipeline.questions_variables import questions_from_generations
+from paneldata_pipeline.topics import TopicParser
+from paneldata_pipeline.transformations import preprocess_transformations
 
 
 def main() -> None:
     """ Entrypoint of the package. """
-    fill_ddionrails(**parse_arguments())
+    _parsed_arguments = parse_arguments()
+    input_folder = _parsed_arguments["input_folder"]
+    output_folder = _parsed_arguments["output_folder"]
+    if _parsed_arguments["unify_instrument_data"]:
+        merge_instruments(input_folder, output_folder)
+    if _parsed_arguments["question_relations"]:
+        # TODO: Fix arguments here
+        questions_from_generations()
+    if _parsed_arguments["variable_relations"]:
+        # TODO: Fix arguments here
+        preprocess_transformations()
+    if _parsed_arguments["topic_tree"]:
+        # TODO: Fix arguments here
+        TopicParser()
 
 
 class CLIArgs(TypedDict, total=False):

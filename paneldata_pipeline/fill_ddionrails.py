@@ -2,7 +2,7 @@ import pathlib
 
 import pandas
 
-from paneldata_pipeline.merge_instruments import main as merge_instruments
+from paneldata_pipeline.merge_instruments import merge_instruments
 from paneldata_pipeline.questions_variables import questions_from_generations
 from paneldata_pipeline.topics import TopicParser
 from paneldata_pipeline.transformations import preprocess_transformations
