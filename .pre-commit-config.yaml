@@ -32,6 +32,13 @@ repos:
         language: system
         files: '.*\.py'
         pass_filenames: true
+      - id: mypy
+        name: Check typing
+        entry: mypy
+        args: ["--ignore-missing-imports", "--strict"]
+        language: system
+        files: ".*.py"
+        pass_filenames: true
       - id: bandit
         name: check python security (bandit)
         entry: bandit

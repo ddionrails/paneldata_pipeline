@@ -15,3 +15,4 @@ pytest-cov = "*"
 paneldata-pipeline = {editable = true,path = "."}
 pandas = "*"
 bandit = "*"
+mypy = "*"
