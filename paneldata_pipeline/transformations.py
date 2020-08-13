@@ -2,19 +2,28 @@
 
 """ Preprocessing step for transformations """
 
-import pathlib
 from collections import OrderedDict
+from pathlib import Path
+from typing import Optional
 
-import pandas as pd
+from pandas import DataFrame, read_csv
 
 from paneldata_pipeline.questions_variables import create_indirect_links_recursive
 
 
 def preprocess_transformations(
-    filename: pathlib.Path, study: str, version: str, verbose: bool = False
-) -> pd.DataFrame:
+    study: str,
+    version: str,
+    input_folder: Optional[Path] = None,
+    output_folder: Optional[Path] = None,
+    verbose: bool = False,
+) -> DataFrame:
+
+    if not input_folder:
+        input_folder = Path("ddionrails/").resolve()
+
     # load variables for filtering
-    variables = pd.read_csv("ddionrails/variables.csv")
+    variables = read_csv(input_folder.joinpath("variables.csv"))
     variables["compare"] = variables["dataset_name"].astype(str) + variables[
         "variable_name"
     ].astype(str)
@@ -29,8 +38,8 @@ def preprocess_transformations(
             ("output_variable", "target_variable_name"),
         ]
     )
-    DTYPE_SETTINGS = {"input_version": str, "output_version": str}
-    generations = pd.read_csv(filename, dtype=DTYPE_SETTINGS)
+    dtype_settings = {"input_version": str, "output_version": str}
+    generations = read_csv(input_folder.joinpath("generations.csv"), dtype=dtype_settings)
     if verbose:
         print(generations.shape)
         print(generations.head())
@@ -73,7 +82,8 @@ def preprocess_transformations(
         print(generations_with_indirect_links.shape)
         print(generations_with_indirect_links.head())
 
-    # remove rows, where left and right side of dataframe are the same variable (due to removing versions)
+    # remove rows, where left and right side of dataframe are the same variable
+    # (due to removing versions)
     mask = (
         generations_with_indirect_links["input_dataset"]
         != generations_with_indirect_links["output_dataset"]
@@ -106,4 +116,4 @@ def preprocess_transformations(
         print(generations_with_indirect_links.shape)
         print(generations_with_indirect_links.head())
     transformations.rename(columns=columns, inplace=True)
-    return transformations
+    transformations.to_csv(output_folder.joinpath("transformations.csv"), index=False)

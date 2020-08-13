@@ -1,5 +1,6 @@
 import json
-from shutil import copy
+from pathlib import Path
+from typing import List
 
 import pandas as pd
 
@@ -76,11 +77,12 @@ class TopicParser:
     """
 
     def __init__(
-        self,
-        topics_input_csv="metadata/topics.csv",
-        concepts_input_csv="metadata/concepts.csv",
-        languages=None,
+        self, input_folder: Path, output_folder: Path, languages: List[str] = None
     ):
+
+        topics_input_csv = input_folder.joinpath("topics.csv")
+        concepts_input_csv = input_folder.joinpath("concepts.csv")
+        self.output_json = output_folder.joinpath("topics.json")
         if not languages:
             languages = ["en", "de"]
         self.topics_input_csv = topics_input_csv
@@ -89,12 +91,9 @@ class TopicParser:
         self.concepts_data = pd.read_csv(concepts_input_csv)
         self.languages = languages
 
-    def to_csv(self, topics_output_csv="ddionrails/topics.csv"):
-        copy(self.topics_input_csv, topics_output_csv)
-
-    def to_json(self, topics_output_json="ddionrails/topics.json"):
+    def to_json(self) -> None:
         json_dict = self._create_json()
-        with open(topics_output_json, "w") as json_file:
+        with open(self.output_json, "w") as json_file:
             json_file.write(json.dumps(json_dict))
 
     def _create_json(self):
@@ -130,9 +129,3 @@ class TopicParser:
         Topic.all_objects = []
         Concept.all_objects = []
         return result
-
-
-if __name__ == "__main__":
-    tp = TopicParser()
-    tp.to_csv()
-    tp.to_json()

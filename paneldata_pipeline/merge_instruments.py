@@ -3,7 +3,6 @@ import json
 import os
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict
 
 import pandas
 
@@ -118,7 +117,7 @@ def write_json(instruments, output_folder: Path):
 def merge_instruments(
     input_folder=Path("metadata").absolute(),
     output_folder=Path("ddionrails/instruments").absolute(),
-) -> Dict:
+) -> None:
     tables = OrderedDict(
         questionnaires=pandas.read_csv(
             input_folder.joinpath("instruments.csv"), encoding="utf-8"
@@ -137,4 +136,3 @@ def merge_instruments(
     for _file in glob.glob(str(output_folder.joinpath("*.json"))):
         os.remove(_file)
     write_json(instruments, output_folder)
-    return instruments
