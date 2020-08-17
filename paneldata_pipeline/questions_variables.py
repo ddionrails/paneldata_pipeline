@@ -82,25 +82,16 @@ def create_indirect_links_recursive(df: DataFrame) -> DataFrame:
 
 
 def create_questions_from_generations(
-    version: str,
-    logical_variables_path: str = "metadata/logical_variables.csv",
-    generations_path: str = "metadata/generations.csv",
+    version: str, logical_variables_path: str, generations_path: str
 ) -> DataFrame:
 
     # The file "logical_variables.csv" contains direct links
     # between variables and questions
     # variable1 <relates to> question1
 
-    logical_variables = read_csv(logical_variables_path)
-    rename_columns = {
-        "study": "study_name",
-        "dataset": "dataset_name",
-        "variable": "variable_name",
-        "questionnaire": "instrument_name",
-        "question": "question_name",
-    }
-    logical_variables.rename(columns=rename_columns, inplace=True)
-    logical_variables = logical_variables[rename_columns.values()]
+    logical_variables = logical_variables[
+        {"study", "dataset", "variable", "questionnaire", "question"}
+    ]
 
     # There are indirect links between variables and questions
     # if we look into "generations.csv".
@@ -123,51 +114,49 @@ def create_questions_from_generations(
     indirect_relations = updated_generations.merge(
         logical_variables,
         left_on=("input_dataset", "input_variable"),
-        right_on=("dataset_name", "variable_name"),
+        right_on=("dataset", "variable"),
     )
 
     wanted_columns = [
         "output_study",
         "output_dataset",
         "output_variable",
-        "instrument_name",
-        "question_name",
+        "instrument",
+        "question",
     ]
     indirect_relations = indirect_relations[wanted_columns]
 
-    rename_columns = {
-        "output_study": "study_name",
-        "output_dataset": "dataset_name",
-        "output_variable": "variable_name",
-        "questionnaire": "instrument_name",
-        "question": "question_name",
+    column_filter = {
+        "output_study": "study",
+        "output_dataset": "dataset",
+        "output_variable": "variable",
+        "questionnaire": "instrument",
+        "question": "question",
     }
 
-    indirect_relations.rename(columns=rename_columns, inplace=True)
+    indirect_relations.rename(columns=column_filter, inplace=True)
 
     questions_variables = logical_variables.append(indirect_relations)
     questions_variables.dropna(inplace=True)
     questions_variables.drop_duplicates(inplace=True)
 
-    sort_columns = [
-        "study_name",
-        "dataset_name",
-        "variable_name",
-        "instrument_name",
-        "question_name",
-    ]
+    sort_columns = ["study", "dataset", "variable", "instrument", "question"]
 
     questions_variables.sort_values(by=sort_columns, inplace=True)
     return questions_variables.reset_index(drop=True)
 
 
 def questions_from_generations(version: str, input_folder: Path, output_folder: Path):
-    questions_variables = create_questions_from_generations(version)
+    questions_variables = create_questions_from_generations(
+        version,
+        logical_variables_path=input_folder.joinpath("logical_variables.csv"),
+        generations_path=input_folder.joinpath("generations.csv"),
+    )
 
     # keep only variables from datasets defined in datasets.csv
 
     datasets = read_csv(input_folder.joinpath("datasets.csv"))
-    mask = questions_variables["dataset_name"].isin(datasets["dataset_name"].unique())
+    mask = questions_variables["dataset"].isin(datasets["name"].unique())
     questions_variables = questions_variables[mask]
     questions_variables.to_csv(
         output_folder.joinpath("questions_variables.csv"), index=False
