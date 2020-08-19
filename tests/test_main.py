@@ -2,7 +2,7 @@
 import sys
 import unittest
 from pathlib import Path
-from typing import Generator
+from typing import Dict, Generator
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -85,6 +85,8 @@ class TestMainModule(unittest.TestCase):  # pylint: disable=missing-docstring
 class TestMainModuleInteraction(unittest.TestCase):
     """Tests concerning the program flow during cli calls."""
 
+    temp_directories: Dict[str, Path]
+
     @staticmethod
     @patch("paneldata_pipeline.__main__.preprocess_transformations")
     @patch("paneldata_pipeline.__main__.TopicParser")
@@ -138,3 +140,26 @@ class TestMainModuleInteraction(unittest.TestCase):
         preprocess_transformations.assert_called_once_with(
             **{"study": arguments[6], "version": arguments[8]}, **path_arguments
         )
+
+    @pytest.mark.usefixtures("temp_directories")
+    def test_full_run(self):
+        """Test a full run with all flags set."""
+        arguments = [
+            "__main__.py",
+            "-i",
+            f'{self.temp_directories["input_path"]}',
+            "-o",
+            f'{self.temp_directories["output_path"]}',
+            "--study",
+            "some-study",
+            "--version",
+            "v1",
+            "-r",
+            "-u",
+            "-q",
+            "-g",
+        ]
+
+        with patch.object(sys, "argv", arguments):
+            main()
+        breakpoint()
