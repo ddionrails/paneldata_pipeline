@@ -100,6 +100,8 @@ def merge_instruments(
     input_folder=Path("metadata").absolute(),
     output_folder=Path("ddionrails/instruments").absolute(),
 ) -> None:
+    if output_folder.name != "instruments":
+        output_folder.joinpath("instruments")
     tables = OrderedDict(
         questionnaires=pandas.read_csv(
             input_folder.joinpath("instruments.csv"), encoding="utf-8"

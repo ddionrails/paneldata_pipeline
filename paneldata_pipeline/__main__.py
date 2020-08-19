@@ -12,8 +12,8 @@ from paneldata_pipeline.transformations import preprocess_transformations
 def main() -> None:
     """ Entrypoint of the package. """
     _parsed_arguments = parse_arguments()
-    input_folder = _parsed_arguments.input_folder
-    output_folder = _parsed_arguments.output_folder
+    input_folder: Path = _parsed_arguments.input_folder
+    output_folder: Path = _parsed_arguments.output_folder
     if _parsed_arguments.unify_instrument_data:
         merge_instruments(input_folder=input_folder, output_folder=output_folder)
     if _parsed_arguments.question_relations:
