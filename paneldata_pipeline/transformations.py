@@ -24,9 +24,9 @@ def preprocess_transformations(
 
     # load variables for filtering
     variables = read_csv(input_folder.joinpath("variables.csv"))
-    variables["compare"] = variables["dataset_name"].astype(str) + variables[
-        "variable_name"
-    ].astype(str)
+    variables["compare"] = variables["dataset"].astype(str) + variables["name"].astype(
+        str
+    )
 
     columns = OrderedDict(
         [

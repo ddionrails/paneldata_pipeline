@@ -89,8 +89,10 @@ def create_questions_from_generations(
     # between variables and questions
     # variable1 <relates to> question1
 
+    logical_variables = read_csv(logical_variables_path)
+
     logical_variables = logical_variables[
-        {"study", "dataset", "variable", "questionnaire", "question"}
+        ["study", "dataset", "variable", "questionnaire", "question"]
     ]
 
     # There are indirect links between variables and questions
@@ -121,7 +123,7 @@ def create_questions_from_generations(
         "output_study",
         "output_dataset",
         "output_variable",
-        "instrument",
+        "questionnaire",
         "question",
     ]
     indirect_relations = indirect_relations[wanted_columns]
