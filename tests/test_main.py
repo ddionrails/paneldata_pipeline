@@ -2,12 +2,27 @@
 import sys
 import unittest
 from pathlib import Path
+from typing import Generator
 from unittest.mock import MagicMock, patch
+
+import pytest
+from _pytest.capture import CaptureFixture
+from _pytest.fixtures import FixtureRequest
 
 from paneldata_pipeline.__main__ import main, parse_arguments
 
 
+@pytest.fixture(name="capsys_unittest")  # type: ignore[misc]
+def _capsys_unittest(
+    capsys: Generator[CaptureFixture, None, None], request: FixtureRequest
+) -> None:
+    request.instance.capsys = capsys
+
+
 class TestMainModule(unittest.TestCase):  # pylint: disable=missing-docstring
+
+    capsys: CaptureFixture
+
     def test_parse_arguments(self) -> None:
         """Define the expected arguments of the shell entrypoint."""
 
@@ -48,6 +63,23 @@ class TestMainModule(unittest.TestCase):  # pylint: disable=missing-docstring
         self.assertEqual(Path(arguments[4]).resolve(), _parsed_arguments["output_folder"])
         for boolean_field in argument_keys[-4:]:
             self.assertTrue(_parsed_arguments[boolean_field])
+
+    @pytest.mark.usefixtures("capsys_unittest")  # type: ignore[misc]
+    def test_help_message(self) -> None:
+        """Help message should be printed with the -h flag and missing argument input."""
+        arguments = ["__main__.py", "-h"]
+
+        with patch.object(sys, "argv", arguments):
+            with self.assertRaises(SystemExit):
+                parse_arguments()
+        h_flag_output = self.capsys.readouterr().out  # type: ignore[no-untyped-call]
+
+        with patch.object(sys, "argv", arguments[:1]):
+            with self.assertRaises(SystemExit):
+                parse_arguments()
+        no_flag_output = self.capsys.readouterr().out  # type: ignore[no-untyped-call]
+
+        self.assertEqual(h_flag_output, no_flag_output)
 
 
 class TestMainModuleInteraction(unittest.TestCase):

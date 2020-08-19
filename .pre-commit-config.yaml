@@ -35,7 +35,7 @@ repos:
       - id: mypy
         name: Check typing
         entry: mypy
-        args: ["--ignore-missing-imports", "--strict"]
+        args: ["--ignore-missing-imports", "--strict", "--show-error-codes"]
         language: system
         files: ".*.py"
         pass_filenames: true

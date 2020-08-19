@@ -1,6 +1,7 @@
 """ Entrypoint related functions of the package. """
 
 import argparse
+import sys
 from pathlib import Path
 
 from paneldata_pipeline.merge_instruments import merge_instruments
@@ -36,18 +37,69 @@ def main() -> None:
 def parse_arguments() -> argparse.Namespace:
     """Set up arguments and parse them."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input-folder", help="Path to the ", type=_full_path)
-    parser.add_argument("-o", "--output-folder", type=_full_path)
-    parser.add_argument("-s", "--study", type=str)
-    parser.add_argument("-w", "--version", type=str)
-    parser.add_argument("-r", "--variable-relations", action="store_true", default=False)
     parser.add_argument(
-        "-u", "--unify-instrument-data", action="store_true", default=False
+        "-i", "--input-folder", help="Path to the input metadata files.", type=_full_path
     )
-    parser.add_argument("-q", "--question-relations", action="store_true", default=False)
-    parser.add_argument("-g", "--generate-topic-tree", action="store_true", default=False)
+    parser.add_argument(
+        "-o",
+        "--output-folder",
+        help="Target directory for created files.",
+        type=_full_path,
+    )
+    parser.add_argument(
+        "-s", "--study", help="Name of the study, that is processed.", type=str
+    )
+    parser.add_argument(
+        "-w", "--version", help="Name of the wave/version of the data.", type=str
+    )
+    parser.add_argument(
+        "-r",
+        "--variable-relations",
+        help=(
+            "Clean up relational file for variables."
+            "Creates a new file with all transitive relations "
+            "and with intermediate variables removed."
+        ),
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "-u",
+        "--unify-instrument-data",
+        help=(
+            "Gather instrument metadata from several csv files in central JSON files. "
+            "Creates one JSON file per instrument."
+        ),
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "-q",
+        "--question-relations",
+        help="Same as -r but for question relations.",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "-g",
+        "--generate-topic-tree",
+        help=(
+            "Generate hierarchical topic tree as JSON file. "
+            "Reads from topics.csv and concepts.csv."
+        ),
+        action="store_true",
+        default=False,
+    )
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
+
     return parser.parse_args()
 
 
 def _full_path(path: str) -> Path:
     return Path(path).resolve()
+
+
+if __name__ == "__main__":
+    main()
