@@ -34,7 +34,7 @@ def main() -> None:
 
 
 def parse_arguments() -> argparse.Namespace:
-    """Setup arguments and parse them."""
+    """Set up arguments and parse them."""
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input-folder", help="Path to the ", type=_full_path)
     parser.add_argument("-o", "--output-folder", type=_full_path)
