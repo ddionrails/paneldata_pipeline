@@ -7,24 +7,6 @@ from pathlib import Path
 import pandas
 
 
-def read_tables(name):
-    tables = glob.glob("metadata/*/*/%s" % name)
-    tables += glob.glob("metadata/%s" % name)
-    result = pandas.read_csv(tables.pop())
-    for table in tables:
-        result = result.append(pandas.read_csv(table))
-    return result
-
-
-def import_tables():
-    tables = OrderedDict(
-        questionnaires=pandas.read_csv("metadata/questionnaires.csv"),
-        questions=read_tables("questions.csv"),
-        answers=read_tables("answers.csv"),
-    )
-    return tables
-
-
 def get_answers(tables):
     answers = OrderedDict()
     for _, answer in tables["answers"].iterrows():
