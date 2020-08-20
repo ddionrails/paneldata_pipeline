@@ -1,3 +1,4 @@
+from csv import DictReader
 from pathlib import Path
 
 from pandas import DataFrame, read_csv
@@ -81,15 +82,13 @@ def create_indirect_links_recursive(df: DataFrame) -> DataFrame:
     return df_copy.sort_values(by=sort_columns).reset_index(drop=True)
 
 
-def create_questions_from_generations(
-    version: str, logical_variables_path: str, generations_path: str
-) -> DataFrame:
+def create_questions_from_generations(version: str, input_folder: Path) -> DataFrame:
 
     # The file "logical_variables.csv" contains direct links
     # between variables and questions
     # variable1 <relates to> question1
 
-    logical_variables = read_csv(logical_variables_path)
+    logical_variables = read_csv(input_folder.joinpath("logical_variables.csv"))
 
     logical_variables = logical_variables[
         ["study", "dataset", "variable", "instrument", "question"]
@@ -105,7 +104,7 @@ def create_questions_from_generations(
 
     # Read input and output version columns as type "string"
     dtype_settings = {"input_version": str, "output_version": str}
-    generations = read_csv(generations_path, dtype=dtype_settings)
+    generations = read_csv(input_folder.joinpath("generations.csv"), dtype=dtype_settings)
     updated_generations = create_indirect_links_recursive(generations)
 
     # Remove rows when output version is not the specified version
@@ -145,14 +144,21 @@ def create_questions_from_generations(
     sort_columns = ["study", "dataset", "variable", "instrument", "question"]
 
     questions_variables.sort_values(by=sort_columns, inplace=True)
+
+    with open(input_folder.joinpath("variables.csv"), "r") as variable_file:
+        variables = {row["name"] for row in DictReader(variable_file)}
+
+    questions_variables = questions_variables[
+        questions_variables["variable"].isin(variables)
+    ]
     return questions_variables.reset_index(drop=True)
 
 
-def questions_from_generations(version: str, input_folder: Path, output_folder: Path):
+def questions_from_generations(
+    version: str, input_folder: Path, output_folder: Path
+) -> None:
     questions_variables = create_questions_from_generations(
-        version,
-        logical_variables_path=input_folder.joinpath("logical_variables.csv"),
-        generations_path=input_folder.joinpath("generations.csv"),
+        version, input_folder=input_folder
     )
 
     # keep only variables from datasets defined in datasets.csv
