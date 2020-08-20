@@ -1,4 +1,7 @@
 """ Test functionality related to the packages entrypoint. """
+import csv
+import glob
+import json
 import sys
 import unittest
 from pathlib import Path
@@ -162,3 +165,43 @@ class TestMainModuleInteraction(unittest.TestCase):
 
         with patch.object(sys, "argv", arguments):
             main()
+        expected_csv_files = list(
+            map(Path, glob.glob("./tests/test_data/expected/**.csv", recursive=True))
+        )
+        expected_json_files = list(
+            map(Path, glob.glob("./tests/test_data/expected/**.json", recursive=True))
+        )
+        csv_files = {
+            Path(_file).name: Path(_file)
+            for _file in glob.glob(f'{self.temp_directories["output_path"]}/**.csv')
+        }
+        json_files = {
+            Path(_file).name: Path(_file)
+            for _file in glob.glob(f'{self.temp_directories["output_path"]}/**.json')
+        }
+        self.assertEqual(len(expected_csv_files), len(csv_files))
+        self.assertEqual(len(expected_json_files), len(json_files))
+
+        for expected_file in expected_json_files:
+            result_file = json_files[expected_file.name]
+            with open(result_file, "r") as file_handle:
+                result_content = json.load(file_handle)
+            with open(expected_file, "r") as file_handle:
+                expected_content = json.load(file_handle)
+            self.assertEqual(
+                expected_content,
+                result_content,
+                msg=f"{result_file.name} not as expected.",
+            )
+
+        for expected_file in expected_csv_files:
+            result_file = csv_files[expected_file.name]
+            with open(result_file, "r") as file_handle:
+                result_content = list(csv.DictReader(file_handle))
+            with open(expected_file, "r") as file_handle:
+                expected_content = list(csv.DictReader(file_handle))
+            self.assertListEqual(
+                expected_content,
+                result_content,
+                msg=f"{result_file.name} not as expected.",
+            )
