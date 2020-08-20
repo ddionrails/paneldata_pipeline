@@ -141,7 +141,7 @@ class TestMainModuleInteraction(unittest.TestCase):
             **{"study": arguments[6], "version": arguments[8]}, **path_arguments
         )
 
-    @pytest.mark.usefixtures("temp_directories")
+    @pytest.mark.usefixtures("temp_directories")  # type: ignore[misc]
     def test_full_run(self) -> None:
         """Test a full run with all flags set."""
         arguments = [
@@ -153,7 +153,7 @@ class TestMainModuleInteraction(unittest.TestCase):
             "--study",
             "some-study",
             "--version",
-            "v1",
+            "v2",
             "-r",
             "-u",
             "-q",
