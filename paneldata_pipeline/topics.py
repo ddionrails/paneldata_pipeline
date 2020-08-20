@@ -43,7 +43,8 @@ class Topic:
     def add_topics_to_parents(cls):
         for topic in cls.all_objects:
             parent = Topic.get_by_name(topic.parent_name)
-            parent.children.append(topic)
+            if parent:
+                parent.children.append(topic)
 
 
 class Concept:
