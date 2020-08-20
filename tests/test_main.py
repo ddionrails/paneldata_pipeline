@@ -142,7 +142,7 @@ class TestMainModuleInteraction(unittest.TestCase):
         )
 
     @pytest.mark.usefixtures("temp_directories")
-    def test_full_run(self):
+    def test_full_run(self) -> None:
         """Test a full run with all flags set."""
         arguments = [
             "__main__.py",
@@ -162,4 +162,3 @@ class TestMainModuleInteraction(unittest.TestCase):
 
         with patch.object(sys, "argv", arguments):
             main()
-        breakpoint()
