@@ -4,7 +4,6 @@
 
 from collections import OrderedDict
 from pathlib import Path
-from typing import Optional
 
 from pandas import DataFrame, read_csv
 
@@ -14,13 +13,15 @@ from paneldata_pipeline.questions_variables import create_indirect_links_recursi
 def preprocess_transformations(
     study: str,
     version: str,
-    input_folder: Optional[Path] = None,
-    output_folder: Optional[Path] = None,
+    input_folder: Path = Path(),
+    output_folder: Path = Path(),
     verbose: bool = False,
 ) -> DataFrame:
 
-    if not input_folder:
-        input_folder = Path("ddionrails/").resolve()
+    if input_folder == Path():
+        input_folder = Path("metadata/").resolve()
+    if output_folder == Path():
+        output_folder = Path("ddionrails/").resolve()
 
     # load variables for filtering
     variables = read_csv(input_folder.joinpath("variables.csv"))
