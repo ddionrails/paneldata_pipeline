@@ -1,46 +1,65 @@
+"""Provides the functionality to create a topic tree JSON file."""
 import json
 from pathlib import Path
-from typing import List
+from typing import Any, Dict, List, Optional, TypedDict, Union
 
-import pandas as pd
+import pandas
 
 LANGUAGES = dict(en="", de="_de")
 
 
+class LeafNode(TypedDict):
+    """A Node referencing a Concept"""
+
+    title: str
+    key: str
+    type: str
+
+
+class Node(LeafNode):
+    """A Node referencing a Topic"""
+
+    children: List[Any]
+
+
 class Topic:
 
-    all_objects = []
+    all_objects: List[Any] = []
 
-    def __init__(self, name=None, parent_name=None, label=None):
+    def __init__(
+        self, name: str = "", parent_name: Optional[str] = None, label: str = ""
+    ):
         self.name = name
         self.parent_name = parent_name
         self.label = label if str(label) != "nan" else ""
-        self.children = []
-        self.concepts = []
+        self.children: List[Topic] = []
+        self.concepts: List[Concept] = []
         self.all_objects.append(self)
 
-    def to_dict(self):
-        children = [x.to_dict() for x in self.children]
+    def to_dict(self) -> Node:
+        children: List[Union[Node, LeafNode]] = [x.to_dict() for x in self.children]
         children += [x.to_dict() for x in self.concepts]
         return dict(
             title=self.label, key="topic_%s" % self.name, type="topic", children=children
         )
 
     @classmethod
-    def get_by_name(cls, name):
+    def get_by_name(cls, name: Optional[str]) -> Optional[Any]:
         """Get topic from all_objects by name"""
+        if name is None:
+            return None
         for topic in cls.all_objects:
             if topic.name == name:
                 return topic
         return None
 
     @classmethod
-    def get_root_topics(cls):
+    def get_root_topics(cls) -> List[Any]:
         """Return topics with no parents (== root topics)"""
         return [x for x in cls.all_objects if x.parent_name is None]
 
     @classmethod
-    def add_topics_to_parents(cls):
+    def add_topics_to_parents(cls) -> None:
         for topic in cls.all_objects:
             parent = Topic.get_by_name(topic.parent_name)
             if parent:
@@ -49,19 +68,19 @@ class Topic:
 
 class Concept:
 
-    all_objects = []
+    all_objects: List[Any] = []
 
-    def __init__(self, name=None, topic_name=None, label=None):
+    def __init__(self, name: str, topic_name: str, label: str):
         self.name = name
         self.topic_name = topic_name
         self.label = label if str(label) != "nan" else ""
         self.all_objects.append(self)
 
-    def to_dict(self):
+    def to_dict(self) -> LeafNode:
         return dict(title=self.label, key="concept_%s" % self.name, type="concept")
 
     @classmethod
-    def add_concepts_to_topics(cls):
+    def add_concepts_to_topics(cls) -> None:
         for concept in cls.all_objects:
             topic = Topic.get_by_name(concept.topic_name)
             if topic:
@@ -78,7 +97,10 @@ class TopicParser:
     """
 
     def __init__(
-        self, input_folder: Path, output_folder: Path, languages: List[str] = None
+        self,
+        input_folder: Path,
+        output_folder: Path,
+        languages: Optional[List[str]] = None,
     ):
 
         topics_input_csv = input_folder.joinpath("topics.csv")
@@ -88,8 +110,8 @@ class TopicParser:
             languages = ["en", "de"]
         self.topics_input_csv = topics_input_csv
         self.concepts_input_csv = concepts_input_csv
-        self.topics_data = pd.read_csv(topics_input_csv)
-        self.concepts_data = pd.read_csv(concepts_input_csv)
+        self.topics_data = pandas.read_csv(topics_input_csv)
+        self.concepts_data = pandas.read_csv(concepts_input_csv)
         self.languages = languages
 
     def to_json(self) -> None:
@@ -97,13 +119,13 @@ class TopicParser:
         with open(self.output_json, "w") as json_file:
             json_file.write(json.dumps(json_dict))
 
-    def _create_json(self):
+    def _create_json(self) -> List[Dict[str, Any]]:
         result = []
         for language in self.languages:
             result.append(dict(language=language, topics=self._convert_to_dict(language)))
         return result
 
-    def _convert_to_dict(self, language):
+    def _convert_to_dict(self, language: str) -> List[Node]:
         for row in self.topics_data.to_dict("records"):
             if str(row.get("parent")) == "nan":
                 parent_name = None
