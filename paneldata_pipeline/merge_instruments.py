@@ -3,12 +3,15 @@ import json
 import os
 from collections import OrderedDict
 from pathlib import Path
+from typing import Dict, List, Tuple  # pylint: disable=W0611
 
 import pandas
 
 
-def get_answers(tables):
-    answers = OrderedDict()
+def get_answers(
+    tables: Dict[str, pandas.DataFrame]
+) -> "OrderedDict[Tuple[str, str], List[pandas.Series]]":
+    answers: "OrderedDict[Tuple[str, str], List[pandas.Series]]" = OrderedDict()
     for _, answer in tables["answers"].iterrows():
         answer = OrderedDict(answer.dropna())
         key = (answer["instrument"], answer["answer_list"])
@@ -19,7 +22,9 @@ def get_answers(tables):
     return answers
 
 
-def get_instruments(tables):
+def get_instruments(
+    tables: "OrderedDict[str, pandas.Series]"
+) -> "OrderedDict[str, pandas.Series]":
     instrument_list = [
         OrderedDict(row.dropna()) for i, row in tables["questionnaires"].iterrows()
     ]
@@ -31,7 +36,11 @@ def get_instruments(tables):
     return instruments
 
 
-def fill_questions(tables, instruments, answers):
+def fill_questions(
+    tables: "OrderedDict[str, pandas.Series]",
+    instruments: "OrderedDict[str, pandas.Series]",
+    answers: "OrderedDict[Tuple[str, str], List[pandas.Series]]",
+) -> "OrderedDict[str, pandas.Series]":
     for _, question_row in tables["questions"].iterrows():
         question_row.dropna(inplace=True)
         study_name = question_row["study"]
@@ -77,7 +86,7 @@ def fill_questions(tables, instruments, answers):
     return instruments
 
 
-def _clean_row(row):
+def _clean_row(row: pandas.Series) -> pandas.Series:
     del row["study"]
     del row["instrument"]
     if "answer_list" in row and not "question" in row:
@@ -87,7 +96,9 @@ def _clean_row(row):
     return row
 
 
-def write_json(instruments, output_folder: Path):
+def write_json(
+    instruments: "OrderedDict[str, pandas.Series]", output_folder: Path
+) -> None:
     if not output_folder.exists():
         os.mkdir(output_folder)
 
@@ -97,8 +108,8 @@ def write_json(instruments, output_folder: Path):
 
 
 def merge_instruments(
-    input_folder=Path("metadata").absolute(),
-    output_folder=Path("ddionrails/instruments").absolute(),
+    input_folder: Path = Path("metadata").absolute(),
+    output_folder: Path = Path("ddionrails/instruments").absolute(),
 ) -> None:
     if output_folder.name != "instruments":
         output_folder.joinpath("instruments")
