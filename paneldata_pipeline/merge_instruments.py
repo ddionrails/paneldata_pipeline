@@ -23,7 +23,7 @@ def get_answers(
 
 
 def get_instruments(
-    tables: "OrderedDict[str, pandas.Series]"
+    tables: "OrderedDict[str, pandas.Series]",
 ) -> "OrderedDict[str, pandas.Series]":
     instrument_list = [
         OrderedDict(row.dropna()) for i, row in tables["questionnaires"].iterrows()
@@ -67,8 +67,9 @@ def fill_questions(
             question["study"] = question_row["study"]
             instrument_questions[question_name] = question
         question_items = instrument_questions[question_name]["items"]
-        key = (question_row["instrument"], question_row["answer_list"])
-        question_row["answers"] = answers[key]
+        if "answer_list" in question_row:
+            key = (question_row["instrument"], question_row["answer_list"])
+            question_row["answers"] = answers[key]
         question_row["sn"] = len(question_items)
         _clean_row(question_row)
         question_dict = question_row.to_dict()
@@ -128,6 +129,6 @@ def merge_instruments(
     instruments = get_instruments(tables)
 
     fill_questions(tables, instruments, answers)
-    for _file in glob.glob(str(output_folder.joinpath("*.json"))):
+    for _file in glob.glob(str(output_folder.joinpath("instruments/*.json"))):
         os.remove(_file)
-    write_json(instruments, output_folder)
+    write_json(instruments, output_folder.joinpath("instruments"))

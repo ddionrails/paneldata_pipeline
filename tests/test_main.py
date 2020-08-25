@@ -166,18 +166,20 @@ class TestMainModuleInteraction(unittest.TestCase):
         with patch.object(sys, "argv", arguments):
             main()
         expected_csv_files = list(
-            map(Path, glob.glob("./tests/test_data/expected/**.csv", recursive=True))
+            map(Path, glob.glob("./tests/test_data/expected/**/*.csv", recursive=True))
         )
         expected_json_files = list(
-            map(Path, glob.glob("./tests/test_data/expected/**.json", recursive=True))
+            map(Path, glob.glob("./tests/test_data/expected/**/*.json", recursive=True))
         )
         csv_files = {
             Path(_file).name: Path(_file)
-            for _file in glob.glob(f'{self.temp_directories["output_path"]}/**.csv')
+            for _file in glob.glob(f'{self.temp_directories["output_path"]}/*.csv')
         }
         json_files = {
             Path(_file).name: Path(_file)
-            for _file in glob.glob(f'{self.temp_directories["output_path"]}/**.json')
+            for _file in glob.glob(
+                f'{self.temp_directories["output_path"]}/**/*.json', recursive=True
+            )
         }
         self.assertEqual(len(expected_csv_files), len(csv_files))
         self.assertEqual(len(expected_json_files), len(json_files))

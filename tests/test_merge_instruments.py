@@ -24,7 +24,9 @@ class TestMergeInstruments(unittest.TestCase):
     def test_complete(self) -> None:
         """Test the creation precess in its entirety"""
         merge_instruments(input_folder=self.in_dir, output_folder=self.out_dir)
-        with open(self.out_dir.joinpath("some-questionnaire.json"), "r") as _file:
+        with open(
+            self.out_dir.joinpath("instruments/some-questionnaire.json"), "r"
+        ) as _file:
             result = json.load(_file)
         self.assertDictEqual(self.expected_dataset, result)
 
