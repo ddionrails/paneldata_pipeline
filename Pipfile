@@ -9,10 +9,9 @@ pre-commit = "*"
 pylint = "*"
 pyroma = "*"
 pytest = "*"
-pytest-cov = "*"
+pbandit = "*"
+mypy = "*"
+ytest-cov = "*"
 
 [packages]
 paneldata-pipeline = {editable = true,path = "."}
-pandas = "*"
-bandit = "*"
-mypy = "*"

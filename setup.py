@@ -13,7 +13,7 @@ setup(
     entry_points={
         "console_scripts": ["paneldata_pipeline=paneldata_pipeline.__main__:main"]
     },
-    install_requires=[],
+    install_requires=["pandas"],
     keywords=["preprocessing", "ddionrails", "paneldata", "csv", "humanities"],
     long_description=open("./README.md").read(),
     name="paneldata_pipeline",
