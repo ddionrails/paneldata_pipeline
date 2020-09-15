@@ -69,7 +69,15 @@ def fill_questions(
         question_items = instrument_questions[question_name]["items"]
         if "answer_list" in question_row:
             key = (question_row["instrument"], question_row["answer_list"])
-            question_row["answers"] = answers[key]
+            try:
+                question_row["answers"] = answers[key]
+            except KeyError:
+                raise KeyError(
+                    (
+                        f"Instrument `{key[0]}` with answer list `{key[1]}`"
+                        " is present in questions.csv but not in answers.csv."
+                    )
+                )
         question_row["sn"] = len(question_items)
         _clean_row(question_row)
         question_dict = question_row.to_dict()
