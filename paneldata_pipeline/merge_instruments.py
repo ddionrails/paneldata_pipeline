@@ -122,6 +122,8 @@ def merge_instruments(
 ) -> None:
     if output_folder.name != "instruments":
         output_folder.joinpath("instruments")
+    if not output_folder.exists():
+        os.mkdir(output_folder)
     tables = OrderedDict(
         questionnaires=pandas.read_csv(
             input_folder.joinpath("instruments.csv"), encoding="utf-8"
