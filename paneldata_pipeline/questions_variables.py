@@ -1,4 +1,3 @@
-from csv import DictReader
 from pathlib import Path
 
 from pandas import DataFrame, read_csv
@@ -145,12 +144,20 @@ def create_questions_from_generations(version: str, input_folder: Path) -> DataF
 
     questions_variables.sort_values(by=sort_columns, inplace=True)
 
-    with open(input_folder.joinpath("variables.csv"), "r") as variable_file:
-        variables = {row["name"] for row in DictReader(variable_file)}
+    # Filter out nonexistent variables
+    variables: DataFrame = read_csv(
+        input_folder.joinpath("variables.csv"),
+        usecols=["name", "dataset"],
+        iterator=False,
+    )
+    variables.rename(columns={"name": "variable"}, inplace=True)
 
-    questions_variables = questions_variables[
-        questions_variables["variable"].isin(variables)
-    ]
+    questions_variables = questions_variables.merge(
+        variables,
+        left_on=["variable", "dataset"],
+        right_on=["variable", "dataset"],
+        how="inner",
+    )
     return questions_variables.reset_index(drop=True)
 
 
