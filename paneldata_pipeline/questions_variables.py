@@ -147,15 +147,15 @@ def create_questions_from_generations(version: str, input_folder: Path) -> DataF
     # Filter out nonexistent variables
     variables: DataFrame = read_csv(
         input_folder.joinpath("variables.csv"),
-        usecols=["name", "dataset"],
+        usecols=["study", "name", "dataset"],
         iterator=False,
     )
     variables.rename(columns={"name": "variable"}, inplace=True)
 
     questions_variables = questions_variables.merge(
         variables,
-        left_on=["variable", "dataset"],
-        right_on=["variable", "dataset"],
+        left_on=["study", "variable", "dataset"],
+        right_on=["study", "variable", "dataset"],
         how="inner",
     )
     return questions_variables.reset_index(drop=True)
