@@ -4,6 +4,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from paneldata_pipeline.concepts import extract_implicit_concepts
 from paneldata_pipeline.merge_instruments import merge_instruments
 from paneldata_pipeline.questions_variables import questions_from_generations
 from paneldata_pipeline.topics import TopicParser
@@ -15,6 +16,8 @@ def main() -> None:
     _parsed_arguments = parse_arguments()
     input_folder: Path = _parsed_arguments.input_folder
     output_folder: Path = _parsed_arguments.output_folder
+    if input_folder.joinpath("concepts.csv").exists():
+        extract_implicit_concepts(input_folder, input_folder.joinpath("concepts.csv"))
     if _parsed_arguments.unify_instrument_data:
         merge_instruments(input_folder=input_folder, output_folder=output_folder)
     if _parsed_arguments.question_relations:
