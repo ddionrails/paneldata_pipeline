@@ -14,9 +14,9 @@ from paneldata_pipeline.concepts import extract_implicit_concepts
 class TestExtractImplicitConcepts(unittest.TestCase):
     """ Test the extraction of concepts only present in variables and question data"""
 
-    concepts_path = Path
-    questions_path = Path
-    variables_path = Path
+    concepts_path: Path
+    questions_path: Path
+    variables_path: Path
     temp_directories: Dict[str, Path]
 
     def test_extract_implicit_concept(self) -> None:
@@ -86,4 +86,15 @@ class TestExtractImplicitConcepts(unittest.TestCase):
             concept_names = {row["name"] for row in dict_reader}
 
         self.assertSetEqual(implicit_concept_names, concept_names)
-        self.assertListEqual(["name", "topic", "label_de", "label"], concept_file_header)
+        self.assertListEqual(
+            [
+                "study",
+                "name",
+                "label",
+                "label_de",
+                "description",
+                "description_de",
+                "topic",
+            ],
+            concept_file_header,
+        )
