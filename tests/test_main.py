@@ -5,21 +5,13 @@ import json
 import sys
 import unittest
 from pathlib import Path
-from typing import Dict, Generator
+from typing import Dict
 from unittest.mock import MagicMock, patch
 
 import pytest
 from _pytest.capture import CaptureFixture
-from _pytest.fixtures import FixtureRequest
 
 from paneldata_pipeline.__main__ import main, parse_arguments
-
-
-@pytest.fixture(name="capsys_unittest")  # type: ignore[misc]
-def _capsys_unittest(
-    capsys: Generator[CaptureFixture, None, None], request: FixtureRequest
-) -> None:
-    request.instance.capsys = capsys
 
 
 class TestMainModule(unittest.TestCase):  # pylint: disable=missing-docstring

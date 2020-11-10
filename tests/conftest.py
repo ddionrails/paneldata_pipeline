@@ -3,13 +3,22 @@ import glob
 from pathlib import Path
 from shutil import copy, rmtree
 from tempfile import mkdtemp
-from typing import Dict
+from typing import Dict, Generator
 
 import pytest
+from _pytest.capture import CaptureFixture
+from _pytest.fixtures import FixtureRequest
 
 
-@pytest.fixture(name="temp_directories")
-def _temp_directories(request) -> Dict[str, Path]:
+@pytest.fixture(name="capsys_unittest")  # type: ignore[misc]
+def _capsys_unittest(
+    capsys: Generator[CaptureFixture, None, None], request: FixtureRequest
+) -> None:
+    request.instance.capsys = capsys
+
+
+@pytest.fixture(name="temp_directories")  # type: ignore[misc]
+def _temp_directories(request: FixtureRequest) -> Generator[Dict[str, Path], None, None]:
     """Provide temporary input and output folders."""
     temp_directories = dict()
     temp_directories["input_path"] = Path(mkdtemp()).absolute()
