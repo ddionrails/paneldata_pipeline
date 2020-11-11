@@ -1,17 +1,56 @@
 """ Test  """
 import sys
 from pathlib import Path
+from typing import Dict
 from unittest import TestCase
 from unittest.mock import patch
 
 import pytest
 from _pytest.capture import CaptureFixture
 
-from paneldata_pipeline.check_relations import parse_arguments
+from paneldata_pipeline.check_relations import (
+    RelationalFile,
+    parse_arguments,
+    relations_exist,
+)
 
 
+@pytest.mark.usefixtures("temp_directories")
 class TestCheckRelations(TestCase):
-    """Test cli and functions of check_relations module."""
+    """Test non cli related parts of check_relations module."""
+
+    temp_directories: Dict[str, Path]
+
+    def test_correct_relations(self) -> None:
+        """The relational check should pass here."""
+        base_path: Path = self.temp_directories["input_path"]
+        to_relation = RelationalFile(
+            file=base_path.joinpath("instruments.csv"), fields=["study", "name"]
+        )
+        from_relation = RelationalFile(
+            file=base_path.joinpath("questions.csv"), fields=["study", "instrument"]
+        )
+        result = relations_exist(target=to_relation, origin=from_relation)
+        self.assertTrue(result)
+
+    def test_incorrect_relations(self) -> None:
+        """The relational check should pass here."""
+        base_path: Path = self.temp_directories["input_path"]
+        incorrect_row = "test-study,none-existent,a,,,,,,,,,,,,"
+        to_relation = RelationalFile(
+            file=base_path.joinpath("instruments.csv"), fields=["study", "name"]
+        )
+        from_relation = RelationalFile(
+            file=base_path.joinpath("questions.csv"), fields=["study", "instrument"]
+        )
+        with open(base_path.joinpath("questions.csv"), "a") as questions_file:
+            questions_file.write(incorrect_row)
+        result = relations_exist(target=to_relation, origin=from_relation)
+        self.assertFalse(result)
+
+
+class TestCLI(TestCase):
+    """Test cli related parts in check_relations module."""
 
     capsys: CaptureFixture
 
