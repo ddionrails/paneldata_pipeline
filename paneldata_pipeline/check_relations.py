@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import List, TypedDict
 
 
-class RelationalFile(TypedDict):
+class FileRelationInformation(TypedDict):
     """Information about a file, whose relations can be tested."""
 
     file: Path
@@ -32,7 +32,9 @@ def parse_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def relations_exist(target: RelationalFile, origin: RelationalFile) -> bool:
+def relations_exist(
+    target: FileRelationInformation, origin: FileRelationInformation
+) -> bool:
     """Check if reference from origin file to a target file exists."""
     with open(target["file"], "r") as _file:
         _reader = DictReader(_file)

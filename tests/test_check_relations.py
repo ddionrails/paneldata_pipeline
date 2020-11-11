@@ -9,7 +9,7 @@ import pytest
 from _pytest.capture import CaptureFixture
 
 from paneldata_pipeline.check_relations import (
-    RelationalFile,
+    FileRelationInformation,
     parse_arguments,
     relations_exist,
 )
@@ -24,10 +24,10 @@ class TestCheckRelations(TestCase):
     def test_correct_relations(self) -> None:
         """The relational check should pass here."""
         base_path: Path = self.temp_directories["input_path"]
-        to_relation = RelationalFile(
+        to_relation = FileRelationInformation(
             file=base_path.joinpath("instruments.csv"), fields=["study", "name"]
         )
-        from_relation = RelationalFile(
+        from_relation = FileRelationInformation(
             file=base_path.joinpath("questions.csv"), fields=["study", "instrument"]
         )
         result = relations_exist(target=to_relation, origin=from_relation)
@@ -37,10 +37,10 @@ class TestCheckRelations(TestCase):
         """The relational check should pass here."""
         base_path: Path = self.temp_directories["input_path"]
         incorrect_row = "test-study,none-existent,a,,,,,,,,,,,,"
-        to_relation = RelationalFile(
+        to_relation = FileRelationInformation(
             file=base_path.joinpath("instruments.csv"), fields=["study", "name"]
         )
-        from_relation = RelationalFile(
+        from_relation = FileRelationInformation(
             file=base_path.joinpath("questions.csv"), fields=["study", "instrument"]
         )
         with open(base_path.joinpath("questions.csv"), "a") as questions_file:
