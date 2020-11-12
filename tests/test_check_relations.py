@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 import pytest
 from _pytest.capture import CaptureFixture
+from _pytest.logging import LogCaptureFixture
 
 from paneldata_pipeline.check_relations import (
     FileRelationInformation,
@@ -21,6 +22,7 @@ from paneldata_pipeline.check_relations import (
 class TestCheckRelations(TestCase):
     """Test non cli related parts of check_relations module."""
 
+    caplog: LogCaptureFixture
     temp_directories: Dict[str, Path]
 
     def test_relation_file_reading(self) -> None:
@@ -46,6 +48,7 @@ class TestCheckRelations(TestCase):
         result = relations_exist(target=to_relation, origins=[from_relation])
         self.assertTrue(result)
 
+    @pytest.mark.usefixtures("caplog_unittest")  # type: ignore[misc]
     def test_incorrect_relations(self) -> None:
         """The relational check should fail here."""
         base_path: Path = self.temp_directories["input_path"]
@@ -59,6 +62,13 @@ class TestCheckRelations(TestCase):
         with open(base_path.joinpath("questions.csv"), "a") as questions_file:
             questions_file.write(incorrect_row)
         result = relations_exist(target=to_relation, origins=[from_relation])
+        self.assertIn(
+            (
+                "Relation from "
+                f'{from_relation["file"]} line 3 to {to_relation["file"]} does not exist'
+            ),
+            self.caplog.text,
+        )
         self.assertFalse(result)
 
     def test_relation_with_multiple_origins(self) -> None:

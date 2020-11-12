@@ -8,6 +8,7 @@ from typing import Dict, Generator
 import pytest
 from _pytest.capture import CaptureFixture
 from _pytest.fixtures import FixtureRequest
+from _pytest.logging import LogCaptureFixture
 
 
 @pytest.fixture(name="capsys_unittest")  # type: ignore[misc]
@@ -15,6 +16,11 @@ def _capsys_unittest(
     capsys: Generator[CaptureFixture, None, None], request: FixtureRequest
 ) -> None:
     request.instance.capsys = capsys
+
+
+@pytest.fixture(name="caplog_unittest")  # type: ignore[misc]
+def _caplog_unittest(caplog: LogCaptureFixture, request: FixtureRequest) -> None:
+    request.instance.caplog = caplog
 
 
 @pytest.fixture(name="temp_directories")  # type: ignore[misc]

@@ -1,10 +1,20 @@
 """ Entrypoint and functions for cli to test relations between metadata files."""
 import argparse
+import logging
 import sys
 from csv import DictReader
 from json import load
 from pathlib import Path
 from typing import List, TypedDict
+
+LOGGER = logging.getLogger()
+LOGGER.setLevel(logging.INFO)
+
+HANDLER = logging.StreamHandler(sys.stdout)
+HANDLER.setLevel(logging.DEBUG)
+FORMATTER = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+HANDLER.setFormatter(FORMATTER)
+LOGGER.addHandler(HANDLER)
 
 
 class FileRelationInformation(TypedDict):
@@ -48,6 +58,9 @@ def parse_arguments() -> argparse.Namespace:
         help="JSON file containing relational information between files",
         type=_full_path,
     )
+    parser.add_argument(
+        "-d", "--debug", help="Activate debug output", action="store_true", default=False
+    )
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
@@ -68,17 +81,24 @@ def relations_exist(
                 _keypair.append(row[field])
             keypairs.add(tuple(_keypair))
 
+    all_relations_exist = True
     for origin in origins:
         with open(origin["file"], "r") as _file:
             _reader = DictReader(_file)
-            for row in _reader:
+            for index, row in enumerate(_reader):
                 _keypair = list()
                 for field in origin["fields"]:
                     _keypair.append(row[field])
                 if tuple(_keypair) not in keypairs:
-                    return False
+                    LOGGER.info(
+                        "Relation from %s line %d to %s does not exist",
+                        origin["file"],
+                        index + 1,
+                        target["file"],
+                    )
+                    all_relations_exist = False
 
-    return True
+    return all_relations_exist
 
 
 def _full_path(path: str) -> Path:
