@@ -2,6 +2,7 @@
 import argparse
 import sys
 from csv import DictReader
+from json import load
 from pathlib import Path
 from typing import List, TypedDict
 
@@ -11,6 +12,28 @@ class FileRelationInformation(TypedDict):
 
     file: Path
     fields: List[str]
+
+
+class RelationOrigin(TypedDict):
+    """Information of a file a relation is originating from."""
+
+    file: str
+    fields: List[str]
+
+
+class RelationTarget(TypedDict):
+    """Information of a file relations are pointing towards."""
+
+    file: str
+    fields: List[str]
+    relations_from: List[RelationOrigin]
+
+
+def read_relations(folder_path: Path) -> List[RelationTarget]:
+    """Read config file containing relational information."""
+    with open(folder_path.joinpath("relations.json")) as file:
+        relations: List[RelationTarget] = load(file)
+    return relations
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -33,7 +56,7 @@ def parse_arguments() -> argparse.Namespace:
 
 
 def relations_exist(
-    target: FileRelationInformation, origin: FileRelationInformation
+    target: FileRelationInformation, origins: List[FileRelationInformation]
 ) -> bool:
     """Check if reference from origin file to a target file exists."""
     with open(target["file"], "r") as _file:
@@ -45,14 +68,15 @@ def relations_exist(
                 _keypair.append(row[field])
             keypairs.add(tuple(_keypair))
 
-    with open(origin["file"], "r") as _file:
-        _reader = DictReader(_file)
-        for row in _reader:
-            _keypair = list()
-            for field in origin["fields"]:
-                _keypair.append(row[field])
-            if tuple(_keypair) not in keypairs:
-                return False
+    for origin in origins:
+        with open(origin["file"], "r") as _file:
+            _reader = DictReader(_file)
+            for row in _reader:
+                _keypair = list()
+                for field in origin["fields"]:
+                    _keypair.append(row[field])
+                if tuple(_keypair) not in keypairs:
+                    return False
 
     return True
 

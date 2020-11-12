@@ -1,4 +1,5 @@
 """ Test  """
+import json
 import sys
 from pathlib import Path
 from typing import Dict
@@ -11,6 +12,7 @@ from _pytest.capture import CaptureFixture
 from paneldata_pipeline.check_relations import (
     FileRelationInformation,
     parse_arguments,
+    read_relations,
     relations_exist,
 )
 
@@ -21,6 +23,17 @@ class TestCheckRelations(TestCase):
 
     temp_directories: Dict[str, Path]
 
+    def test_relation_file_reading(self) -> None:
+        """File describing relations should be read correctly."""
+        base_path: Path = self.temp_directories["input_path"]
+        relational_file = base_path.joinpath("relations.json")
+        with open(relational_file, "w+") as file:
+            json.dump(RELATIONAL_FILE_CONTENT, file)
+        relations = read_relations(folder_path=base_path)
+        self.assertIsInstance(relations, list)
+        for index, relation in enumerate(relations):
+            self.assertEqual(RELATIONAL_FILE_CONTENT[index], relation)
+
     def test_correct_relations(self) -> None:
         """The relational check should pass here."""
         base_path: Path = self.temp_directories["input_path"]
@@ -30,7 +43,7 @@ class TestCheckRelations(TestCase):
         from_relation = FileRelationInformation(
             file=base_path.joinpath("questions.csv"), fields=["study", "instrument"]
         )
-        result = relations_exist(target=to_relation, origin=from_relation)
+        result = relations_exist(target=to_relation, origins=[from_relation])
         self.assertTrue(result)
 
     def test_incorrect_relations(self) -> None:
@@ -45,7 +58,7 @@ class TestCheckRelations(TestCase):
         )
         with open(base_path.joinpath("questions.csv"), "a") as questions_file:
             questions_file.write(incorrect_row)
-        result = relations_exist(target=to_relation, origin=from_relation)
+        result = relations_exist(target=to_relation, origins=[from_relation])
         self.assertFalse(result)
 
 
@@ -96,3 +109,22 @@ class TestCLI(TestCase):
         h_flag_output = self.capsys.readouterr().out  # type: ignore[no-untyped-call]
 
         self.assertEqual(h_flag_output, no_flag_output)
+
+
+RELATIONAL_FILE_CONTENT = [
+    {
+        "file": "analysis_units.csv",
+        "fields": ["name"],
+        "relations_from": [
+            {"file": "datasets.csv", "fields": ["analysis_unit"]},
+            {"file": "instruments.csv", "fields": ["analysis_unit"]},
+        ],
+    },
+    {
+        "file": "answers.csv",
+        "fields": ["study", "instrument", "answer_list"],
+        "relations_from": [
+            {"file": "questions.csv", "fields": ["study", "instrument", "answer_list"]}
+        ],
+    },
+]
