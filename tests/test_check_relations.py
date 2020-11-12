@@ -36,6 +36,7 @@ class TestCheckRelations(TestCase):
         for index, relation in enumerate(relations):
             self.assertEqual(RELATIONAL_FILE_CONTENT[index], relation)
 
+    @pytest.mark.usefixtures("caplog_unittest")  # type: ignore[misc]
     def test_correct_relations(self) -> None:
         """The relational check should pass here."""
         base_path: Path = self.temp_directories["input_path"]
@@ -47,6 +48,19 @@ class TestCheckRelations(TestCase):
         )
         result = relations_exist(target=to_relation, origins=[from_relation])
         self.assertTrue(result)
+        self.assertIn(
+            (
+                "Checking relation beetween file:"
+                f'{from_relation["file"]} '
+                "fields:"
+                f'[{", ".join(from_relation["fields"])}] '
+                "to file:"
+                f'{to_relation["file"]} '
+                "fields:"
+                f'[{", ".join(to_relation["fields"])}]'
+            ),
+            self.caplog.text,
+        )
 
     @pytest.mark.usefixtures("caplog_unittest")  # type: ignore[misc]
     def test_incorrect_relations(self) -> None:
@@ -62,13 +76,7 @@ class TestCheckRelations(TestCase):
         with open(base_path.joinpath("questions.csv"), "a") as questions_file:
             questions_file.write(incorrect_row)
         result = relations_exist(target=to_relation, origins=[from_relation])
-        self.assertIn(
-            (
-                "Relation from "
-                f'{from_relation["file"]} line 3 to {to_relation["file"]} does not exist'
-            ),
-            self.caplog.text,
-        )
+        self.assertIn(("Relation in line 3 does not exist"), self.caplog.text)
         self.assertFalse(result)
 
     def test_relation_with_multiple_origins(self) -> None:

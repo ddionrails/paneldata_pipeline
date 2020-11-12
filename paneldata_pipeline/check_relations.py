@@ -85,17 +85,23 @@ def relations_exist(
     for origin in origins:
         with open(origin["file"], "r") as _file:
             _reader = DictReader(_file)
+            LOGGER.info(
+                (
+                    "Checking relation beetween "
+                    "file:%s fields:[%s] to "
+                    "file:%s fields:[%s]"
+                ),
+                origin["file"],
+                ", ".join(origin["fields"]),
+                target["file"],
+                ", ".join(target["fields"]),
+            )
             for index, row in enumerate(_reader):
                 _keypair = list()
                 for field in origin["fields"]:
                     _keypair.append(row[field])
                 if tuple(_keypair) not in keypairs:
-                    LOGGER.info(
-                        "Relation from %s line %d to %s does not exist",
-                        origin["file"],
-                        index + 1,
-                        target["file"],
-                    )
+                    LOGGER.info("Relation in line %d does not exist", index + 1)
                     all_relations_exist = False
 
     return all_relations_exist
