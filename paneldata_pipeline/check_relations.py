@@ -17,24 +17,17 @@ HANDLER.setFormatter(FORMATTER)
 LOGGER.addHandler(HANDLER)
 
 
-class FileRelationInformation(TypedDict):
-    """Information about a file, whose relations can be tested."""
+class RelationOrigin(TypedDict):
+    """Information about a file a relation is originating from."""
 
     file: Path
-    fields: List[str]
-
-
-class RelationOrigin(TypedDict):
-    """Information of a file a relation is originating from."""
-
-    file: str
     fields: List[str]
 
 
 class RelationTarget(TypedDict):
     """Information of a file relations are pointing towards."""
 
-    file: str
+    file: Path
     fields: List[str]
     relations_from: List[RelationOrigin]
 
@@ -68,9 +61,7 @@ def parse_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def relations_exist(
-    target: FileRelationInformation, origins: List[FileRelationInformation]
-) -> bool:
+def relations_exist(target: RelationOrigin, origins: List[RelationOrigin]) -> bool:
     """Check if reference from origin file to a target file exists."""
     with open(target["file"], "r") as _file:
         _reader = DictReader(_file)

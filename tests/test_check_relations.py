@@ -11,7 +11,7 @@ from _pytest.capture import CaptureFixture
 from _pytest.logging import LogCaptureFixture
 
 from paneldata_pipeline.check_relations import (
-    FileRelationInformation,
+    RelationOrigin,
     parse_arguments,
     read_relations,
     relations_exist,
@@ -40,10 +40,10 @@ class TestCheckRelations(TestCase):
     def test_correct_relations(self) -> None:
         """The relational check should pass here."""
         base_path: Path = self.temp_directories["input_path"]
-        to_relation = FileRelationInformation(
+        to_relation = RelationOrigin(
             file=base_path.joinpath("instruments.csv"), fields=["study", "name"]
         )
-        from_relation = FileRelationInformation(
+        from_relation = RelationOrigin(
             file=base_path.joinpath("questions.csv"), fields=["study", "instrument"]
         )
         result = relations_exist(target=to_relation, origins=[from_relation])
@@ -67,10 +67,10 @@ class TestCheckRelations(TestCase):
         """The relational check should fail here."""
         base_path: Path = self.temp_directories["input_path"]
         incorrect_row = "test-study,none-existent,a,,,,,,,,,,,,"
-        to_relation = FileRelationInformation(
+        to_relation = RelationOrigin(
             file=base_path.joinpath("instruments.csv"), fields=["study", "name"]
         )
-        from_relation = FileRelationInformation(
+        from_relation = RelationOrigin(
             file=base_path.joinpath("questions.csv"), fields=["study", "instrument"]
         )
         with open(base_path.joinpath("questions.csv"), "a") as questions_file:
@@ -82,18 +82,14 @@ class TestCheckRelations(TestCase):
     def test_relation_with_multiple_origins(self) -> None:
         """The relational check should pass here."""
         base_path: Path = self.temp_directories["input_path"]
-        to_relation = FileRelationInformation(
+        to_relation = RelationOrigin(
             file=base_path.joinpath("concepts.csv"), fields=["name"]
         )
         from_relation = [
-            FileRelationInformation(
-                file=base_path.joinpath("questions.csv"), fields=["concept"]
-            )
+            RelationOrigin(file=base_path.joinpath("questions.csv"), fields=["concept"])
         ]
         from_relation.append(
-            FileRelationInformation(
-                file=base_path.joinpath("variables.csv"), fields=["concept"]
-            )
+            RelationOrigin(file=base_path.joinpath("variables.csv"), fields=["concept"])
         )
         result = relations_exist(target=to_relation, origins=from_relation)
         self.assertFalse(result)
@@ -102,18 +98,14 @@ class TestCheckRelations(TestCase):
         """The relational check should fail here for the first file."""
         base_path: Path = self.temp_directories["input_path"]
         incorrect_row = "test-study,none-existent,a,,,,,,,,,,,,"
-        to_relation = FileRelationInformation(
+        to_relation = RelationOrigin(
             file=base_path.joinpath("concepts.csv"), fields=["name"]
         )
         from_relation = [
-            FileRelationInformation(
-                file=base_path.joinpath("questions.csv"), fields=["concept"]
-            )
+            RelationOrigin(file=base_path.joinpath("questions.csv"), fields=["concept"])
         ]
         from_relation.append(
-            FileRelationInformation(
-                file=base_path.joinpath("variables.csv"), fields=["concept"]
-            )
+            RelationOrigin(file=base_path.joinpath("variables.csv"), fields=["concept"])
         )
         with open(base_path.joinpath("questions.csv"), "a") as questions_file:
             questions_file.write(incorrect_row)
