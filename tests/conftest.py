@@ -33,6 +33,8 @@ def _temp_directories(request: FixtureRequest) -> Generator[Dict[str, Path], Non
     data_path = Path("./tests/test_data/").absolute()
     for _file in glob.glob(f"{data_path}/*.csv"):
         copy(_file, temp_directories["input_path"])
+    for _file in glob.glob(f"{data_path}/*.json"):
+        copy(_file, temp_directories["input_path"])
 
     if request.instance:
         request.instance.temp_directories = temp_directories

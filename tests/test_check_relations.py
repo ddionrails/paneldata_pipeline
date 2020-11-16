@@ -12,6 +12,7 @@ from _pytest.logging import LogCaptureFixture
 
 from paneldata_pipeline.check_relations import (
     RelationOrigin,
+    main,
     parse_arguments,
     read_relations,
     relations_exist,
@@ -31,7 +32,7 @@ class TestCheckRelations(TestCase):
         relational_file = base_path.joinpath("relations.json")
         with open(relational_file, "w+") as file:
             json.dump(RELATIONAL_FILE_CONTENT, file)
-        relations = read_relations(folder_path=base_path)
+        relations = read_relations(file_path=relational_file)
         self.assertIsInstance(relations, list)
         for index, relation in enumerate(relations):
             self.assertEqual(RELATIONAL_FILE_CONTENT[index], relation)
@@ -116,7 +117,9 @@ class TestCheckRelations(TestCase):
 class TestCLI(TestCase):
     """Test cli related parts in check_relations module."""
 
+    caplog: LogCaptureFixture
     capsys: CaptureFixture
+    temp_directories: Dict[str, Path]
 
     def test_parse_arguments(self) -> None:
         """Define the expected arguments of the shell entrypoint."""
@@ -160,6 +163,59 @@ class TestCLI(TestCase):
         h_flag_output = self.capsys.readouterr().out  # type: ignore[no-untyped-call]
 
         self.assertEqual(h_flag_output, no_flag_output)
+
+    @pytest.mark.usefixtures("temp_directories")  # type: ignore[misc]
+    def test_full_run(self) -> None:
+        """Test a full run with all flags set."""
+        base_path: Path = self.temp_directories["input_path"]
+
+        arguments = [
+            "check_relations.py",
+            "-i",
+            str(base_path),
+            "-r",
+            str(base_path.joinpath("relations.json")),
+        ]
+
+        with patch.object(sys, "argv", arguments):
+            with self.assertRaises(SystemExit) as system_exit:
+                main()
+            self.assertEqual(0, system_exit.exception.code)
+
+    @pytest.mark.usefixtures("caplog_unittest")  # type: ignore[misc]
+    @pytest.mark.usefixtures("temp_directories")  # type: ignore[misc]
+    def test_full_run_exceptions(self) -> None:
+        """Test a full run with all flags set."""
+        base_path: Path = self.temp_directories["input_path"]
+
+        arguments = [
+            "check_relations.py",
+            "-i",
+            str(base_path),
+            "-r",
+            str(base_path.joinpath("nonexistent_file.json")),
+        ]
+
+        with patch.object(sys, "argv", arguments):
+            with self.assertRaises(SystemExit) as system_exit:
+                main()
+            self.assertRegex(
+                self.caplog.text,
+                f'No.*file.*exist.*{str(base_path.joinpath("nonexistent_file.json"))}',
+            )
+            self.assertEqual(1, system_exit.exception.code)
+
+        faulty_file = base_path.joinpath("faulty.json")
+        with open(faulty_file, "w+") as file:
+            file.write("{\n")
+            file.write('"test": "test"')
+        arguments = ["check_relations.py", "-i", str(base_path), "-r", str(faulty_file)]
+
+        with patch.object(sys, "argv", arguments):
+            with self.assertRaises(SystemExit) as system_exit:
+                main()
+            self.assertRegex(self.caplog.text, f".*{str(faulty_file)}:.*line 2 column.*")
+            self.assertEqual(1, system_exit.exception.code)
 
 
 RELATIONAL_FILE_CONTENT = [

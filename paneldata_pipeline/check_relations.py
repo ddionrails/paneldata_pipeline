@@ -3,7 +3,7 @@ import argparse
 import logging
 import sys
 from csv import DictReader
-from json import load
+from json import decoder, load
 from pathlib import Path
 from typing import List, TypedDict
 
@@ -32,9 +32,35 @@ class RelationTarget(TypedDict):
     relations_from: List[RelationOrigin]
 
 
-def read_relations(folder_path: Path) -> List[RelationTarget]:
+def main() -> None:
+    """Entrypoint for the CLI."""
+    arguments = parse_arguments()
+    try:
+        relations = read_relations(arguments.relational_file)
+    except FileNotFoundError:
+        LOGGER.error("No relational file exists at %s", arguments.relational_file)
+        sys.exit(1)
+    except decoder.JSONDecodeError as error:
+        LOGGER.error("Error in JSON format of %s: %s", arguments.relational_file, error)
+        sys.exit(1)
+
+    all_relations_exist = set()
+    for relation in relations:
+        try:
+            all_relations_exist.add(relations_exist(relation, relation["relations_from"]))
+        except FileNotFoundError as error:
+            LOGGER.info(
+                "A file from the config is not present in the input directory: %s", error
+            )
+
+    if False in all_relations_exist:
+        sys.exit(1)
+    sys.exit(0)
+
+
+def read_relations(file_path: Path) -> List[RelationTarget]:
     """Read config file containing relational information."""
-    with open(folder_path.joinpath("relations.json")) as file:
+    with open(file_path) as file:
         relations: List[RelationTarget] = load(file)
     return relations
 
