@@ -113,15 +113,11 @@ def relations_exist(target: RelationOrigin, origins: List[RelationOrigin]) -> bo
         with open(origin["file"], "r") as _file:
             _reader = DictReader(_file)
             LOGGER.info(
-                (
-                    "Checking relation beetween "
-                    "file:%s fields:[%s] to "
-                    "file:%s fields:[%s]"
-                ),
-                origin["file"],
-                origin["fields"],
-                target["file"],
+                ("Checking relation to " "%s:%s from " "%s:%s"),
+                target["file"].name,
                 target["fields"],
+                origin["file"].name,
+                origin["fields"],
             )
             for row_number, row in enumerate(_reader, start=2):
                 _keypair = list()
@@ -131,7 +127,7 @@ def relations_exist(target: RelationOrigin, origins: List[RelationOrigin]) -> bo
                 if "" in _keypair:
                     continue
                 if tuple(_keypair) not in keypairs:
-                    LOGGER.info("Relation in line %d does not exist", row_number)
+                    LOGGER.info("Relation target in line %d does not exist.", row_number)
                     all_relations_exist = False
 
     return all_relations_exist

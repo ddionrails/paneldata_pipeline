@@ -50,18 +50,13 @@ class TestCheckRelations(TestCase):
         )
         result = relations_exist(target=to_relation, origins=[from_relation])
         self.assertTrue(result)
-        self.assertRegex(
+        self.assertIn(
+            ("{}:{}".format(to_relation["file"].name, to_relation["fields"])),
             self.caplog.text,
-            (
-                ".*"
-                f'{from_relation["file"]} '
-                ".*fields:.*"
-                f'[{", ".join(from_relation["fields"])}] '
-                ".*file:.*"
-                f'{to_relation["file"]} '
-                ".*fields:.*"
-                f'[{", ".join(to_relation["fields"])}]'
-            ),
+        )
+        self.assertIn(
+            ("{}:{}".format(from_relation["file"].name, from_relation["fields"])),
+            self.caplog.text,
         )
 
     @pytest.mark.usefixtures("caplog_unittest")  # type: ignore[misc]
@@ -78,7 +73,7 @@ class TestCheckRelations(TestCase):
         with open(base_path.joinpath("questions.csv"), "a") as questions_file:
             questions_file.write(incorrect_row)
         result = relations_exist(target=to_relation, origins=[from_relation])
-        self.assertIn(("Relation in line 4 does not exist"), self.caplog.text)
+        self.assertIn(("Relation target in line 4 does not exist."), self.caplog.text)
         self.assertFalse(result)
 
     def test_relation_with_multiple_origins(self) -> None:
