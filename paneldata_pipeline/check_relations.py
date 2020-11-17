@@ -48,6 +48,14 @@ def main() -> None:
 
     all_relations_exist = set()
     for relation in relations:
+        relation["file"] = arguments.input_folder.joinpath(relation["file"])
+        relation["relations_from"] = [
+            {
+                "file": arguments.input_folder.joinpath(origin["file"]),
+                "fields": origin["fields"],
+            }
+            for origin in relation["relations_from"]
+        ]
         try:
             all_relations_exist.add(relations_exist(relation, relation["relations_from"]))
         except FileNotFoundError as error:
@@ -111,14 +119,17 @@ def relations_exist(target: RelationOrigin, origins: List[RelationOrigin]) -> bo
                     "file:%s fields:[%s]"
                 ),
                 origin["file"],
-                ", ".join(origin["fields"]),
+                origin["fields"],
                 target["file"],
-                ", ".join(target["fields"]),
+                target["fields"],
             )
             for index, row in enumerate(_reader):
                 _keypair = list()
                 for field in origin["fields"]:
                     _keypair.append(row[field])
+                # Skip check if no relation is defined inside the fields.
+                if "" in _keypair:
+                    continue
                 if tuple(_keypair) not in keypairs:
                     LOGGER.info("Relation in line %d does not exist", index + 1)
                     all_relations_exist = False

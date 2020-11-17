@@ -17,6 +17,7 @@ from paneldata_pipeline.check_relations import (
     read_relations,
     relations_exist,
 )
+from paneldata_pipeline.concepts import extract_implicit_concepts
 
 
 @pytest.mark.usefixtures("temp_directories")
@@ -49,18 +50,18 @@ class TestCheckRelations(TestCase):
         )
         result = relations_exist(target=to_relation, origins=[from_relation])
         self.assertTrue(result)
-        self.assertIn(
+        self.assertRegex(
+            self.caplog.text,
             (
-                "Checking relation beetween file:"
+                ".*"
                 f'{from_relation["file"]} '
-                "fields:"
+                ".*fields:.*"
                 f'[{", ".join(from_relation["fields"])}] '
-                "to file:"
+                ".*file:.*"
                 f'{to_relation["file"]} '
-                "fields:"
+                ".*fields:.*"
                 f'[{", ".join(to_relation["fields"])}]'
             ),
-            self.caplog.text,
         )
 
     @pytest.mark.usefixtures("caplog_unittest")  # type: ignore[misc]
@@ -168,6 +169,10 @@ class TestCLI(TestCase):
     def test_full_run(self) -> None:
         """Test a full run with all flags set."""
         base_path: Path = self.temp_directories["input_path"]
+
+        extract_implicit_concepts(
+            input_path=base_path, concepts_path=base_path.joinpath("concepts.csv")
+        )
 
         arguments = [
             "check_relations.py",
