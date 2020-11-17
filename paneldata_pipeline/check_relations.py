@@ -139,3 +139,7 @@ def relations_exist(target: RelationOrigin, origins: List[RelationOrigin]) -> bo
 
 def _full_path(path: str) -> Path:
     return Path(path).resolve()
+
+
+if __name__ == "__main__":
+    main()
