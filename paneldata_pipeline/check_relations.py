@@ -35,6 +35,8 @@ class RelationTarget(TypedDict):
 def main() -> None:
     """Entrypoint for the CLI."""
     arguments = parse_arguments()
+    if arguments.debug:
+        LOGGER.setLevel(logging.DEBUG)
     try:
         relations = read_relations(arguments.relational_file)
     except FileNotFoundError:
@@ -49,7 +51,7 @@ def main() -> None:
         try:
             all_relations_exist.add(relations_exist(relation, relation["relations_from"]))
         except FileNotFoundError as error:
-            LOGGER.info(
+            LOGGER.debug(
                 "A file from the config is not present in the input directory: %s", error
             )
 
