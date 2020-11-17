@@ -123,7 +123,7 @@ def relations_exist(target: RelationOrigin, origins: List[RelationOrigin]) -> bo
                 target["file"],
                 target["fields"],
             )
-            for index, row in enumerate(_reader):
+            for row_number, row in enumerate(_reader, start=2):
                 _keypair = list()
                 for field in origin["fields"]:
                     _keypair.append(row[field])
@@ -131,7 +131,7 @@ def relations_exist(target: RelationOrigin, origins: List[RelationOrigin]) -> bo
                 if "" in _keypair:
                     continue
                 if tuple(_keypair) not in keypairs:
-                    LOGGER.info("Relation in line %d does not exist", index + 1)
+                    LOGGER.info("Relation in line %d does not exist", row_number)
                     all_relations_exist = False
 
     return all_relations_exist
