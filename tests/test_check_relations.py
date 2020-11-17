@@ -187,6 +187,29 @@ class TestCLI(TestCase):
                 main()
             self.assertEqual(0, system_exit.exception.code)
 
+    @pytest.mark.usefixtures("temp_directories")  # type: ignore[misc]
+    def test_failing_full_run(self) -> None:
+        """Test a failing full run with all flags set.
+
+        A call to extract_implicit_concepts is skipped here.
+        This means there are missing relations beetween variables.csv/questions.csv
+        and concepts.csv.
+        """
+        base_path: Path = self.temp_directories["input_path"]
+
+        arguments = [
+            "check_relations.py",
+            "-i",
+            str(base_path),
+            "-r",
+            str(base_path.joinpath("relations.json")),
+        ]
+
+        with patch.object(sys, "argv", arguments):
+            with self.assertRaises(SystemExit) as system_exit:
+                main()
+            self.assertEqual(1, system_exit.exception.code)
+
     @pytest.mark.usefixtures("caplog_unittest")  # type: ignore[misc]
     @pytest.mark.usefixtures("temp_directories")  # type: ignore[misc]
     def test_full_run_exceptions(self) -> None:
