@@ -11,6 +11,7 @@
       "question": "vtest",
       "name": "vtest",
       "label": "Do You test?",
+      "label_de": "Testen Sie?",
       "items": [
         {
           "item": "14",
@@ -47,6 +48,7 @@
       "question": "vsex",
       "name": "vsex",
       "label": "(Sex)",
+      "label_de": "(Geschlecht)",
       "items": [
         {
           "item": "1",

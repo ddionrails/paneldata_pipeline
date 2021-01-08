@@ -59,8 +59,10 @@ def fill_questions(
             question = OrderedDict()
             question["question"] = question_name
             question["name"] = question_name
-            if "label" not in question and "text" in question_row:
-                question["label"] = question_row["text"]
+            question["label"] = question_row.get("label", question_row.get("text", ""))
+            question["label_de"] = question_row.get(
+                "label_de", question_row.get("text_de", "")
+            )
             question["items"] = OrderedDict()
             question["sn"] = len(instrument_questions)
             question["instrument"] = question_row["instrument"]
