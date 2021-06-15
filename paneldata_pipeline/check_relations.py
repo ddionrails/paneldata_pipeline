@@ -122,7 +122,7 @@ def relations_exist(target: RelationOrigin, origins: List[RelationOrigin]) -> bo
             for row_number, row in enumerate(_reader, start=2):
                 _keypair = list()
                 for field in origin["fields"]:
-                    _keypair.append(row[field])
+                    _keypair.append(row.get(field, ""))
                 # Skip check if no relation is defined inside the fields.
                 if "" in _keypair:
                     continue
