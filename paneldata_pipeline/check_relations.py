@@ -50,10 +50,10 @@ def main() -> None:
     for relation in relations:
         relation["file"] = arguments.input_folder.joinpath(relation["file"])
         relation["relations_from"] = [
-            {
-                "file": arguments.input_folder.joinpath(origin["file"]),
-                "fields": origin["fields"],
-            }
+            RelationOrigin(
+                file=arguments.input_folder.joinpath(origin["file"]),
+                fields=origin["fields"],
+            )
             for origin in relation["relations_from"]
         ]
         try:
