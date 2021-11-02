@@ -35,6 +35,7 @@ class TestExtractImplicitConcepts(unittest.TestCase):
         extract_implicit_concepts(
             input_path=self.temp_directories["input_path"],
             concepts_path=self.concepts_path,
+            output_concepts_path=self.concepts_path,
         )
 
         with open(self.concepts_path, "r") as csv_file:

@@ -17,7 +17,11 @@ def main() -> None:
     input_folder: Path = _parsed_arguments.input_folder
     output_folder: Path = _parsed_arguments.output_folder
     if input_folder.joinpath("concepts.csv").exists():
-        extract_implicit_concepts(input_folder, input_folder.joinpath("concepts.csv"))
+        extract_implicit_concepts(
+            input_folder,
+            input_folder.joinpath("concepts.csv"),
+            output_folder.joinpath("concepts.csv"),
+        )
     if _parsed_arguments.unify_instrument_data:
         merge_instruments(input_folder=input_folder, output_folder=output_folder)
     if _parsed_arguments.question_relations:

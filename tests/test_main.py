@@ -194,11 +194,8 @@ class TestMainModuleInteraction(unittest.TestCase):
                 result_content = list(csv.DictReader(file_handle))
             with open(expected_file, "r") as file_handle:
                 expected_content = list(csv.DictReader(file_handle))
-            try:
-                self.assertListEqual(
-                    expected_content,
-                    result_content,
-                    msg=f"{result_file.name} not as expected.",
-                )
-            except AssertionError:
-                breakpoint()
+            self.assertListEqual(
+                expected_content,
+                result_content,
+                msg=f"{result_file.name} not as expected.",
+            )

@@ -166,7 +166,9 @@ class TestCLI(TestCase):
         base_path: Path = self.temp_directories["input_path"]
 
         extract_implicit_concepts(
-            input_path=base_path, concepts_path=base_path.joinpath("concepts.csv")
+            input_path=base_path,
+            concepts_path=base_path.joinpath("concepts.csv"),
+            output_concepts_path=base_path.joinpath("concepts.csv"),
         )
 
         arguments = [
