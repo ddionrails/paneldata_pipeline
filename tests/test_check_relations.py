@@ -12,6 +12,7 @@ from _pytest.logging import LogCaptureFixture
 
 from paneldata_pipeline.check_relations import (
     RelationOrigin,
+    check_cat_question_items,
     main,
     parse_arguments,
     read_relations,
@@ -37,6 +38,19 @@ class TestCheckRelations(TestCase):
         self.assertIsInstance(relations, list)
         for index, relation in enumerate(relations):
             self.assertEqual(RELATIONAL_FILE_CONTENT[index], relation)
+
+    def test_check_cat_question_items(self) -> None:
+        """File describing relations should be read correctly."""
+        base_path: Path = self.temp_directories["input_path"]
+        questions_file = base_path.joinpath("questions.csv")
+        incorrect_line = (
+            "test-study,some-questionnaire,"
+            "1,vsex,13786,(Geschlecht),,(Sex),,cat,,,vsex,,"
+        )
+
+        with open(questions_file, "a") as file:
+            file.write(incorrect_line)
+        self.assertFalse(check_cat_question_items(base_path))
 
     @pytest.mark.usefixtures("caplog_unittest")  # type: ignore[misc]
     def test_correct_relations(self) -> None:

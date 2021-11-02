@@ -47,6 +47,8 @@ def main() -> None:
         sys.exit(1)
 
     all_relations_exist = set()
+    all_relations_exist.add(check_cat_question_items(arguments.input_folder))
+
     for relation in relations:
         relation["file"] = arguments.input_folder.joinpath(relation["file"])
         relation["relations_from"] = [
@@ -66,6 +68,24 @@ def main() -> None:
     if False in all_relations_exist:
         sys.exit(1)
     sys.exit(0)
+
+
+def check_cat_question_items(input_folder: Path) -> bool:
+    """Check if all questions with scale cat have a value for answer_list."""
+    LOGGER.info("Checking if all cat questions have answer_list values.")
+    questions_path = input_folder.joinpath("questions.csv")
+    passed = True
+    if not questions_path.exists():
+        return True
+    with open(input_folder.joinpath("questions.csv"), "r", encoding="utf8") as file:
+        reader = DictReader(file)
+        for row_number, row in enumerate(reader, start=2):
+            if row["scale"] != "cat":
+                continue
+            if row["answer_list"] == "":
+                passed = False
+                LOGGER.info("Question in line %d has no answer_list.", row_number)
+    return passed
 
 
 def read_relations(file_path: Path) -> List[RelationTarget]:
