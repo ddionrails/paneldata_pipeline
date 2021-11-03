@@ -84,7 +84,10 @@ def check_cat_question_items(input_folder: Path) -> bool:
                 continue
             if row["answer_list"] == "":
                 passed = False
-                LOGGER.info("Question %s has no answer_list.", row)
+                LOGGER.info(
+                    "Question %s has no answer_list.",
+                    {key: row[key] for key in ["study", "instrument", "name", "item"]},
+                )
     return passed
 
 

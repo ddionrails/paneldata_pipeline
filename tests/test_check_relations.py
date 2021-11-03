@@ -55,7 +55,10 @@ class TestCheckRelations(TestCase):
         with open(questions_file, "r", encoding="utf8") as file:
             last_line = {}
             for line in DictReader(file):
-                last_line = line
+                last_line = {
+                    key: line[key] for key in ["study", "instrument", "name", "item"]
+                }
+
         self.assertFalse(check_cat_question_items(base_path))
         self.assertIn(
             "Question {} has no answer_list.".format(last_line), self.caplog.text
