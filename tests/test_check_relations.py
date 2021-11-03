@@ -1,6 +1,7 @@
 """ Test  """
 import json
 import sys
+from csv import DictReader
 from pathlib import Path
 from typing import Dict
 from unittest import TestCase
@@ -49,14 +50,15 @@ class TestCheckRelations(TestCase):
             "1,vsex,13786,(Geschlecht),,(Sex),,cat,,,vsex,,"
         )
 
-        with open(questions_file, "r", encoding="utf8") as file:
-            line_count = sum(1 for line in file)
-
         with open(questions_file, "a") as file:
             file.write(incorrect_line)
+        with open(questions_file, "r", encoding="utf8") as file:
+            last_line = {}
+            for line in DictReader(file):
+                last_line = line
         self.assertFalse(check_cat_question_items(base_path))
         self.assertIn(
-            f"Question in line {line_count+1} has no answer_list.", self.caplog.text
+            "Question {} has no answer_list.".format(last_line), self.caplog.text
         )
 
     @pytest.mark.usefixtures("caplog_unittest")  # type: ignore[misc]

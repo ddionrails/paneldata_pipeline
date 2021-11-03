@@ -79,12 +79,12 @@ def check_cat_question_items(input_folder: Path) -> bool:
         return True
     with open(input_folder.joinpath("questions.csv"), "r", encoding="utf8") as file:
         reader = DictReader(file)
-        for row_number, row in enumerate(reader, start=2):
+        for row in reader:
             if row["scale"] != "cat":
                 continue
             if row["answer_list"] == "":
                 passed = False
-                LOGGER.info("Question in line %d has no answer_list.", row_number)
+                LOGGER.info("Question %s has no answer_list.", row)
     return passed
 
 
