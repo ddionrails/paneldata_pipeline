@@ -39,6 +39,7 @@ class TestCheckRelations(TestCase):
         for index, relation in enumerate(relations):
             self.assertEqual(RELATIONAL_FILE_CONTENT[index], relation)
 
+    @pytest.mark.usefixtures("caplog_unittest")  # type: ignore[misc]
     def test_check_cat_question_items(self) -> None:
         """File describing relations should be read correctly."""
         base_path: Path = self.temp_directories["input_path"]
@@ -48,9 +49,15 @@ class TestCheckRelations(TestCase):
             "1,vsex,13786,(Geschlecht),,(Sex),,cat,,,vsex,,"
         )
 
+        with open(questions_file, "r", encoding="utf8") as file:
+            line_count = sum(1 for line in file)
+
         with open(questions_file, "a") as file:
             file.write(incorrect_line)
         self.assertFalse(check_cat_question_items(base_path))
+        self.assertIn(
+            f"Question in line {line_count+1} has no answer_list.", self.caplog.text
+        )
 
     @pytest.mark.usefixtures("caplog_unittest")  # type: ignore[misc]
     def test_correct_relations(self) -> None:
