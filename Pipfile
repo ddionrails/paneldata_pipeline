@@ -10,11 +10,12 @@ pylint = "*"
 pyroma = "*"
 pytest = "*"
 pytest-cov = "*"
+mypy = "*"
+bandit = "*"
+types-tabulate = "*"
 
 [packages]
 paneldata-pipeline = {editable = true, path = "."}
 pandas = "*"
-bandit = "*"
-mypy = "*"
-frictionless = {extras = ["json"], version = "*"}
+frictionless = "*"
 tabulate = "*"

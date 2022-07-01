@@ -19,7 +19,7 @@ setup(
             "paneldata_relation_checks=paneldata_pipeline.check_relations:main",
         ]
     },
-    install_requires=["pandas"],
+    install_requires=["pandas", "frictionless", "tabulate"],
     keywords=["preprocessing", "ddionrails", "paneldata", "csv", "humanities"],
     long_description=LONG_DESCRIPTION,
     name="paneldata_pipeline",
