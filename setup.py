@@ -1,6 +1,9 @@
 """ Setup script for the paneldata_pipeline package."""
 from setuptools import find_packages, setup
 
+with open("./README.md", encoding="utf8") as readme:
+    LONG_DESCRIPTION = readme.read()
+
 setup(
     author="Dominique Hansen",
     author_email="dhansen@diw.de",
@@ -18,9 +21,10 @@ setup(
     },
     install_requires=["pandas"],
     keywords=["preprocessing", "ddionrails", "paneldata", "csv", "humanities"],
-    long_description=open("./README.md").read(),
+    long_description=LONG_DESCRIPTION,
     name="paneldata_pipeline",
     packages=find_packages(),
+    package_data={"resources": ["resources/*.json"]},
     python_requires=">=3.6.0",
     url="https://github.com/ddionrails/paneldata_pipeline.git",
     version="0.0.1",

@@ -1,0 +1,67 @@
+{
+  "name": "logical_variables",
+  "path": "logical_variables.csv",
+  "title": "Logical variables",
+  "description": "A description about the logical_variables.csv file",
+  "schema": {
+    "fields": [
+      {
+        "name": "study",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "dataset",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "variable",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "instrument",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "question",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "item",
+        "type": "string",
+        "format": "default"
+      }
+    ],
+    "missingValues": [
+      ""
+    ]
+  },
+  "profile": "tabular-data-resource",
+  "format": "csv",
+  "mediatype": "text/csv",
+  "encoding": "utf-8"
+}

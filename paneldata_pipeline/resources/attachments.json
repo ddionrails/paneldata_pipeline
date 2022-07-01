@@ -1,0 +1,98 @@
+{
+  "name": "attachments",
+  "path": "attachments.csv",
+  "title": "Attachments",
+  "description": "A description about the attachments.csv file",
+  "schema": {
+    "fields": [
+      {
+        "name": "type",
+        "title": "Type of the attachment",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255,
+          "enum": [
+            "study",
+            "dataset",
+            "variable",
+            "instrument",
+            "question"
+          ]
+        }
+      },
+      {
+        "name": "study",
+        "title": "Foreign key to Study",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "dataset",
+        "title": "Foreign key to Dataset",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "variable",
+        "title": "Foreign key to Variable",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "instrument",
+        "title": "Foreign key to Instrument",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "question",
+        "title": "Foreign key to Question",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "url",
+        "type": "string",
+        "format": "uri",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "url_text",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 80
+        }
+      }
+    ],
+    "missingValues": [
+      ""
+    ]
+  },
+  "profile": "tabular-data-resource",
+  "format": "csv",
+  "mediatype": "text/csv",
+  "encoding": "utf-8"
+}

@@ -4,7 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-black = "==19.3b0"
+black = "*"
 pre-commit = "*"
 pylint = "*"
 pyroma = "*"
@@ -12,7 +12,9 @@ pytest = "*"
 pytest-cov = "*"
 
 [packages]
-paneldata-pipeline = {editable = true,path = "."}
+paneldata-pipeline = {editable = true, path = "."}
 pandas = "*"
 bandit = "*"
 mypy = "*"
+frictionless = {extras = ["json"], version = "*"}
+tabulate = "*"
