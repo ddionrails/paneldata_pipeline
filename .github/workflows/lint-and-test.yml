@@ -12,9 +12,9 @@ jobs:
       - name: Install
         run: |
           pip install pipenv
-          pipenv requirements --dev > Requirements.txt
+          pipenv requirements --dev > CI_Requirements.txt
           export PATH=${PATH}:$(pwd)
-          pip install -r Requirements.txt
+          pip install -r CI_Requirements.txt
 
       - name: Test Format
         run: |
