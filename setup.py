@@ -22,7 +22,7 @@ setup(
     install_requires=[
         "pandas==1.4.3",
         "frictionless==4.40.3",
-        "tabulate==0.8.10tabulate",
+        "tabulate==0.8.10",
     ],
     keywords=["preprocessing", "ddionrails", "paneldata", "csv", "humanities"],
     long_description=LONG_DESCRIPTION,
