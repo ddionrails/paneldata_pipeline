@@ -1,0 +1,26 @@
+name: Lint and Test
+
+on:
+  push:
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install
+        run: |
+          pip install pipenv
+          pipenv requirements --dev > Requirements.txt
+          export PATH=${PATH}:$(pwd)
+          pip install -r Requirements.txt
+
+      - name: Test Format
+        run: |
+          isort -c
+          black --check --line-length=90 --target-version=py36 .
+          pyroma .
+          pylint --rcfile=setup.cfg paneldata_pipeline tests
+      - name: Unittests
+        run: pytest -rf --cov
