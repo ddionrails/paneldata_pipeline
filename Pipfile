@@ -13,9 +13,9 @@ pytest-cov = "*"
 mypy = "*"
 bandit = "*"
 types-tabulate = "*"
+paneldata-pipeline = {editable = true, path = "."}
 
 [packages]
-paneldata-pipeline = {editable = true, path = "."}
 pandas = "*"
 frictionless = "*"
 tabulate = "*"
