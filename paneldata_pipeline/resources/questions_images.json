@@ -1,0 +1,84 @@
+{
+  "name": "questions_images",
+  "path": "questions_images.csv",
+  "title": "Questions images",
+  "description": "Images linked to questions.",
+  "schema": {
+    "fields": [
+      {
+        "name": "study",
+        "title": "Foreign key to Study",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "instrument",
+        "title": "Foreign key to Instrument",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "question",
+        "title": "Foreign key to Question",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "url",
+        "title": "Url to the image file",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "url_de",
+        "title": "Url to the german image file",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": false
+        }
+      },
+      {
+        "name": "label",
+        "title": "The images english label",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": false
+        }
+      },
+      {
+        "name": "label_de",
+        "title": "The images german label",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": false
+        }
+      }
+    ],
+    "missingValues": [
+      ""
+    ]
+  },
+  "profile": "tabular-data-resource",
+  "format": "csv",
+  "mediatype": "text/csv",
+  "encoding": "utf-8"
+}

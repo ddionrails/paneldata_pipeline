@@ -1,0 +1,86 @@
+{
+  "name": "publications",
+  "path": "publications.csv",
+  "title": "Publications",
+  "description": "A list of publications associated with the study.",
+  "schema": {
+    "fields": [
+      {
+        "name": "study",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "name",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 20
+        }
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 20
+        }
+      },
+      {
+        "name": "author",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 20
+        }
+      },
+      {
+        "name": "year",
+        "type": "string",
+        "format": "default"
+      },
+      {
+        "name": "abstract",
+        "type": "string",
+        "format": "default"
+      },
+      {
+        "name": "cite",
+        "type": "string",
+        "format": "default"
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "format": "default"
+      },
+      {
+        "name": "studies",
+        "type": "string",
+        "format": "default"
+      },
+      {
+        "name": "url",
+        "type": "string",
+        "format": "default"
+      },
+      {
+        "name": "doi",
+        "type": "string",
+        "format": "default"
+      }
+    ],
+    "missingValues": [
+      ""
+    ]
+  },
+  "profile": "tabular-data-resource",
+  "format": "csv",
+  "mediatype": "text/csv",
+  "encoding": "utf-8"
+}

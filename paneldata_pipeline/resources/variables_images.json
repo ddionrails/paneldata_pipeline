@@ -1,0 +1,77 @@
+{
+  "name": "variables_images",
+  "path": "variables_images.csv",
+  "title": "Variables images",
+  "description": "Images linked to variables",
+  "schema": {
+    "fields": [
+      {
+        "name": "study",
+        "title": "Foreign key to Study",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "dataset",
+        "title": "Foreign key to Dataset",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "variable",
+        "title": "Foreign key to a Variable",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "concept",
+        "title": "Foreign key to Concept",
+        "type": "string",
+        "format": "default"
+      },
+      {
+        "name": "url",
+        "title": "Url to the image file",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": true,
+          "maxLength": 255
+        }
+      },
+      {
+        "name": "url_de",
+        "title": "Url to the german image file",
+        "type": "string",
+        "format": "default",
+        "constraints": {
+          "required": false
+        }
+      }
+    ],
+    "primaryKey": [
+      "study",
+      "dataset",
+      "name"
+    ],
+    "missingValues": [
+      ""
+    ]
+  },
+  "profile": "tabular-data-resource",
+  "format": "csv",
+  "mediatype": "text/csv",
+  "encoding": "utf-8"
+}
