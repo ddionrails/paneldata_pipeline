@@ -18,7 +18,7 @@ jobs:
 
       - name: Test Format
         run: |
-          isort -c .
+          isort -c --settings-file setup.cfg .
           black --check --line-length=90 --target-version=py36 .
           pyroma .
           pylint --rcfile=setup.cfg paneldata_pipeline tests
