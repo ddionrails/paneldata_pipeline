@@ -19,8 +19,7 @@
         "type": "string",
         "format": "default",
         "constraints": {
-          "required": true,
-          "maxLength": 20
+          "required": true
         }
       },
       {
@@ -28,8 +27,7 @@
         "type": "string",
         "format": "default",
         "constraints": {
-          "required": true,
-          "maxLength": 20
+          "required": true
         }
       },
       {
@@ -37,8 +35,7 @@
         "type": "string",
         "format": "default",
         "constraints": {
-          "required": true,
-          "maxLength": 20
+          "required": true
         }
       },
       {
