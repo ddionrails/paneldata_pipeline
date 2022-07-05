@@ -28,7 +28,7 @@ setup(
     long_description=LONG_DESCRIPTION,
     name="paneldata_pipeline",
     packages=find_packages(),
-    package_data={"resources": ["resources/*.json"]},
+    package_data={"resources": ["paneldata_pipline/resources/*.json"]},
     python_requires=">=3.6.0",
     url="https://github.com/ddionrails/paneldata_pipeline.git",
     version="0.0.1",
