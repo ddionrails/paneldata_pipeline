@@ -1,1 +1,1 @@
-recursive-include paneldata_pipeline/resources
+recursive-include paneldata_pipeline/resources/ *.json
