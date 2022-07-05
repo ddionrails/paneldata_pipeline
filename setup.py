@@ -24,6 +24,7 @@ setup(
         "frictionless==4.40.3",
         "tabulate==0.8.10",
     ],
+    include_package_data=True,
     keywords=["preprocessing", "ddionrails", "paneldata", "csv", "humanities"],
     long_description=LONG_DESCRIPTION,
     name="paneldata_pipeline",
@@ -31,5 +32,5 @@ setup(
     package_data={"resources": ["paneldata_pipline/resources/*.json"]},
     python_requires=">=3.6.0",
     url="https://github.com/ddionrails/paneldata_pipeline.git",
-    version="0.0.1",
+    version="0.1.0",
 )
