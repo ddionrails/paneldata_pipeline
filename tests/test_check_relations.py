@@ -33,7 +33,7 @@ class TestCheckRelations(TestCase):
         """File describing relations should be read correctly."""
         base_path: Path = self.temp_directories["input_path"]
         relational_file = base_path.joinpath("relations.json")
-        with open(relational_file, "w+") as file:
+        with open(relational_file, "w+", encoding="utf8") as file:
             json.dump(RELATIONAL_FILE_CONTENT, file)
         relations = read_relations(file_path=relational_file)
         self.assertIsInstance(relations, list)
@@ -50,7 +50,7 @@ class TestCheckRelations(TestCase):
             "1,vsex,13786,(Geschlecht),,(Sex),,cat,,,vsex,,"
         )
 
-        with open(questions_file, "a") as file:
+        with open(questions_file, "a", encoding="utf8") as file:
             file.write(incorrect_line)
         with open(questions_file, "r", encoding="utf8") as file:
             last_line = {}
@@ -60,9 +60,7 @@ class TestCheckRelations(TestCase):
                 }
 
         self.assertFalse(check_cat_question_items(base_path))
-        self.assertIn(
-            "Question {} has no answer_list.".format(last_line), self.caplog.text
-        )
+        self.assertIn(f"Question {last_line} has no answer_list.", self.caplog.text)
 
     @pytest.mark.usefixtures("caplog_unittest")  # type: ignore[misc]
     def test_correct_relations(self) -> None:
@@ -77,11 +75,11 @@ class TestCheckRelations(TestCase):
         result = relations_exist(target=to_relation, origins=[from_relation])
         self.assertTrue(result)
         self.assertIn(
-            ("{}:{}".format(to_relation["file"].name, to_relation["fields"])),
+            (f"{to_relation['file'].name}:{to_relation['fields']}"),
             self.caplog.text,
         )
         self.assertIn(
-            ("{}:{}".format(from_relation["file"].name, from_relation["fields"])),
+            f"{from_relation['file'].name}:{from_relation['fields']}",
             self.caplog.text,
         )
 
@@ -96,7 +94,9 @@ class TestCheckRelations(TestCase):
         from_relation = RelationOrigin(
             file=base_path.joinpath("questions.csv"), fields=["study", "instrument"]
         )
-        with open(base_path.joinpath("questions.csv"), "a") as questions_file:
+        with open(
+            base_path.joinpath("questions.csv"), "a", encoding="utf8"
+        ) as questions_file:
             questions_file.write(incorrect_row)
         result = relations_exist(target=to_relation, origins=[from_relation])
         self.assertIn(("Relation target in line 4 does not exist."), self.caplog.text)
@@ -130,7 +130,9 @@ class TestCheckRelations(TestCase):
         from_relation.append(
             RelationOrigin(file=base_path.joinpath("variables.csv"), fields=["concept"])
         )
-        with open(base_path.joinpath("questions.csv"), "a") as questions_file:
+        with open(
+            base_path.joinpath("questions.csv"), "a", encoding="utf8"
+        ) as questions_file:
             questions_file.write(incorrect_row)
         result = relations_exist(target=to_relation, origins=from_relation)
         self.assertFalse(result)
@@ -257,7 +259,7 @@ class TestCLI(TestCase):
             self.assertEqual(1, system_exit.exception.code)
 
         faulty_file = base_path.joinpath("faulty.json")
-        with open(faulty_file, "w+") as file:
+        with open(faulty_file, "w+", encoding="utf8") as file:
             file.write("{\n")
             file.write('"test": "test"')
         arguments = ["check_relations.py", "-i", str(base_path), "-r", str(faulty_file)]

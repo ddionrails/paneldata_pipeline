@@ -93,7 +93,7 @@ def check_cat_question_items(input_folder: Path) -> bool:
 
 def read_relations(file_path: Path) -> List[RelationTarget]:
     """Read config file containing relational information."""
-    with open(file_path) as file:
+    with open(file_path, encoding="utf8") as file:
         relations: List[RelationTarget] = load(file)
     return relations
 
@@ -122,28 +122,28 @@ def parse_arguments() -> argparse.Namespace:
 
 def relations_exist(target: RelationOrigin, origins: List[RelationOrigin]) -> bool:
     """Check if reference from origin file to a target file exists."""
-    with open(target["file"], "r") as _file:
+    with open(target["file"], "r", encoding="utf8") as _file:
         _reader = DictReader(_file)
         keypairs = set()
         for row in _reader:
-            _keypair = list()
+            _keypair = []
             for field in target["fields"]:
                 _keypair.append(row[field])
             keypairs.add(tuple(_keypair))
 
     all_relations_exist = True
     for origin in origins:
-        with open(origin["file"], "r") as _file:
+        with open(origin["file"], "r", encoding="utf8") as _file:
             _reader = DictReader(_file)
             LOGGER.info(
-                ("Checking relation to " "%s:%s from " "%s:%s"),
+                "Checking relation to %s:%s from %s:%s",
                 target["file"].name,
                 target["fields"],
                 origin["file"].name,
                 origin["fields"],
             )
             for row_number, row in enumerate(_reader, start=2):
-                _keypair = list()
+                _keypair = []
                 for field in origin["fields"]:
                     _keypair.append(row.get(field, ""))
                 # Skip check if no relation is defined inside the fields.

@@ -178,9 +178,9 @@ class TestMainModuleInteraction(unittest.TestCase):
 
         for expected_file in expected_json_files:
             result_file = json_files[expected_file.name]
-            with open(result_file, "r") as file_handle:
+            with open(result_file, "r", encoding="utf8") as file_handle:
                 result_content = json.load(file_handle)
-            with open(expected_file, "r") as file_handle:
+            with open(expected_file, "r", encoding="utf8") as file_handle:
                 expected_content = json.load(file_handle)
             self.assertEqual(
                 expected_content,
@@ -190,9 +190,9 @@ class TestMainModuleInteraction(unittest.TestCase):
 
         for expected_file in expected_csv_files:
             result_file = csv_files[expected_file.name]
-            with open(result_file, "r") as file_handle:
+            with open(result_file, "r", encoding="utf8") as file_handle:
                 result_content = list(csv.DictReader(file_handle))
-            with open(expected_file, "r") as file_handle:
+            with open(expected_file, "r", encoding="utf8") as file_handle:
                 expected_content = list(csv.DictReader(file_handle))
             self.assertListEqual(
                 expected_content,

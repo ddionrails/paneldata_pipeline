@@ -40,7 +40,7 @@ class Topic:
         children: List[Union[Node, LeafNode]] = [x.to_dict() for x in self.children]
         children += [x.to_dict() for x in self.concepts]
         return dict(
-            title=self.label, key="topic_%s" % self.name, type="topic", children=children
+            title=self.label, key=f"topic_{self.name}", type="topic", children=children
         )
 
     @classmethod
@@ -77,7 +77,7 @@ class Concept:
         self.all_objects.append(self)
 
     def to_dict(self) -> LeafNode:
-        return dict(title=self.label, key="concept_%s" % self.name, type="concept")
+        return dict(title=self.label, key=f"concept_{self.name}", type="concept")
 
     @classmethod
     def add_concepts_to_topics(cls) -> None:
@@ -86,7 +86,7 @@ class Concept:
             if topic:
                 topic.concepts.append(concept)
             else:
-                print("Topic not found: %s" % concept.topic_name)
+                print(f"Topic not found: {concept.topic_name}")
 
 
 class TopicParser:
@@ -116,16 +116,16 @@ class TopicParser:
 
     def to_json(self) -> None:
         json_dict = self._create_json()
-        with open(self.output_json, "w") as json_file:
+        with open(self.output_json, "w", encoding="utf8") as json_file:
             json_file.write(json.dumps(json_dict))
 
     def _create_json(self) -> List[Dict[str, Any]]:
         result = []
         for language in self.languages:
-            result.append(dict(language=language, topics=self._convert_to_dict(language)))
+            result.append(dict(language=language, topics=self.to_dict(language)))
         return result
 
-    def _convert_to_dict(self, language: str) -> List[Node]:
+    def to_dict(self, language: str) -> List[Node]:
         for row in self.topics_data.to_dict("records"):
             if str(row.get("parent")) == "nan":
                 parent_name = None
@@ -145,9 +145,9 @@ class TopicParser:
                 )
         Topic.add_topics_to_parents()
         Concept.add_concepts_to_topics()
-        print("Language: %s" % language)
-        print("Topics: %s" % len(Topic.all_objects))
-        print("Concepts: %s" % len(Concept.all_objects))
+        print(f"Language: {language}")
+        print(f"Topics: {len(Topic.all_objects)}")
+        print(f"Concepts: {len(Concept.all_objects)}")
         result = [topic.to_dict() for topic in Topic.get_root_topics()]
         Topic.all_objects = []
         Concept.all_objects = []

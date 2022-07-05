@@ -15,7 +15,9 @@ class TestMergeInstruments(unittest.TestCase):
         self.in_dir = Path("./tests/test_data/").absolute()
         self.out_dir = Path(mkdtemp()).absolute()
         with open(
-            Path("./tests/test_data/expected/some-questionnaire.json").absolute(), "r"
+            Path("./tests/test_data/expected/some-questionnaire.json").absolute(),
+            "r",
+            encoding="utf8",
         ) as _file:
             self.expected_dataset = json.load(_file)
 
@@ -25,7 +27,9 @@ class TestMergeInstruments(unittest.TestCase):
         """Test the creation precess in its entirety"""
         merge_instruments(input_folder=self.in_dir, output_folder=self.out_dir)
         with open(
-            self.out_dir.joinpath("instruments/some-questionnaire.json"), "r"
+            self.out_dir.joinpath("instruments/some-questionnaire.json"),
+            "r",
+            encoding="utf8",
         ) as _file:
             result = json.load(_file)
         self.assertDictEqual(self.expected_dataset, result)

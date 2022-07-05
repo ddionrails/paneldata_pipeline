@@ -26,7 +26,7 @@ def _caplog_unittest(caplog: LogCaptureFixture, request: FixtureRequest) -> None
 @pytest.fixture(name="temp_directories")  # type: ignore[misc]
 def _temp_directories(request: FixtureRequest) -> Generator[Dict[str, Path], None, None]:
     """Provide temporary input and output folders."""
-    temp_directories = dict()
+    temp_directories = {}
     temp_directories["input_path"] = Path(mkdtemp()).absolute()
     temp_directories["output_path"] = Path(mkdtemp()).absolute()
 

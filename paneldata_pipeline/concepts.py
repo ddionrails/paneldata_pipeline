@@ -13,13 +13,13 @@ def extract_implicit_concepts(
     if output_concepts_path == Path():
         output_concepts_path = input_path.joinpath("concepts.csv")
 
-    implicit_concepts: Dict[str, str] = dict()
+    implicit_concepts: Dict[str, str] = {}
 
     for path in [
         input_path.joinpath("variables.csv"),
         input_path.joinpath("questions.csv"),
     ]:
-        with open(path, "r") as csv_file:
+        with open(path, "r", encoding="utf8") as csv_file:
             for row in csv.DictReader(csv_file):
                 _concept = row.get("concept", row.get("concept_name"))
                 if _concept is None:
@@ -33,7 +33,7 @@ def extract_implicit_concepts(
                     )
 
     if not concepts_path.exists():
-        with open(concepts_path, "w+") as concepts_csv:
+        with open(concepts_path, "w+", encoding="utf8") as concepts_csv:
             csv.DictWriter(
                 concepts_csv,
                 fieldnames=[
@@ -58,7 +58,7 @@ def extract_implicit_concepts(
     }
     implicit_concepts.pop("", None)
 
-    with open(output_concepts_path, "w") as concepts_csv:
+    with open(output_concepts_path, "w", encoding="utf8") as concepts_csv:
         writer = csv.DictWriter(concepts_csv, concept_fields, restval="")
         writer.writeheader()
         for row in concept_csv_content:
@@ -68,12 +68,12 @@ def extract_implicit_concepts(
 
 
 def __read_explicit_concepts(
-    concepts_path: Path
+    concepts_path: Path,
 ) -> Tuple[List[Dict[str, str]], Set[str], Sequence[str]]:
     """Read content, concepts and fieldnames defined in source concepts.csv."""
-    with open(concepts_path, "r") as concepts_csv:
+    with open(concepts_path, "r", encoding="utf8") as concepts_csv:
         concepts_reader = csv.DictReader(concepts_csv)
-        concept_csv_content = list()
+        concept_csv_content = []
         explicit_concepts = set()
         if concepts_reader.fieldnames:
             concept_fields = concepts_reader.fieldnames

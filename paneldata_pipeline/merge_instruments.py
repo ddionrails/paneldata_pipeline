@@ -3,20 +3,20 @@ import json
 import os
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict, List, Tuple  # pylint: disable=W0611
+from typing import Dict, List, Tuple
 
 import pandas
 
 
 def get_answers(
     tables: Dict[str, pandas.DataFrame]
-) -> "OrderedDict[Tuple[str, str], List[pandas.Series]]":
-    answers: "OrderedDict[Tuple[str, str], List[pandas.Series]]" = OrderedDict()
+) -> OrderedDict[Tuple[str, str], List[pandas.Series]]:
+    answers: OrderedDict[Tuple[str, str], List[pandas.Series]] = OrderedDict()
     for _, answer in tables["answers"].iterrows():
         answer = OrderedDict(answer.dropna())
         key = (answer["instrument"], answer["answer_list"])
         if key not in answers:
-            answers[key] = list()
+            answers[key] = []
         _clean_row(answer)
         answers[key].append(answer)
     return answers
@@ -73,13 +73,13 @@ def fill_questions(
             key = (question_row["instrument"], question_row["answer_list"])
             try:
                 question_row["answers"] = answers[key]
-            except KeyError:
+            except KeyError as error:
                 raise KeyError(
                     (
                         f"Instrument `{key[0]}` with answer list `{key[1]}`"
                         " is present in questions.csv but not in answers.csv."
                     )
-                )
+                ) from error
         question_row["sn"] = len(question_items)
         _clean_row(question_row)
         question_dict = question_row.to_dict()
@@ -114,7 +114,9 @@ def write_json(
         os.mkdir(output_folder)
 
     for instrument_name, instrument in instruments.items():
-        with open(output_folder.joinpath(f"{instrument_name}.json"), "w") as json_file:
+        with open(
+            output_folder.joinpath(f"{instrument_name}.json"), "w", encoding="utf8"
+        ) as json_file:
             json.dump(instrument, json_file, indent=2, ensure_ascii=False)
 
 

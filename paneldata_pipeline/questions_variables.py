@@ -3,12 +3,12 @@ from pathlib import Path
 from pandas import DataFrame, read_csv
 
 
-def create_indirect_links_once(df: DataFrame) -> DataFrame:
-    """ This function gets a Dataframe as input.
+def create_indirect_links_once(link_table: DataFrame) -> DataFrame:
+    """This function gets a Dataframe as input.
 
-        The function then merges the Dataframe with itself on given keys.
-        The function returns the Dataframe with newly added lines
-        that result from indirect links.
+    The function then merges the Dataframe with itself on given keys.
+    The function returns the Dataframe with newly added lines
+    that result from indirect links.
     """
 
     # merge the Dataframe with itself based on keys of input study etc. and output study.
@@ -23,8 +23,8 @@ def create_indirect_links_once(df: DataFrame) -> DataFrame:
     # output_study, output_dataset, output_version, output_variable
     # 1, 1, 1, 1
 
-    temp = df.merge(
-        df,
+    temp = link_table.merge(
+        link_table,
         right_on=["input_study", "input_dataset", "input_version", "input_variable"],
         left_on=["output_study", "output_dataset", "output_version", "output_variable"],
     )
@@ -57,17 +57,17 @@ def create_indirect_links_once(df: DataFrame) -> DataFrame:
     temp.rename(columns=rename_columns, inplace=True)
 
     # add new rows to the original Dataframe, dropping duplicates
-    return df.append(temp).drop_duplicates().reset_index(drop=True)
+    return link_table.append(temp).drop_duplicates().reset_index(drop=True)
 
 
-def create_indirect_links_recursive(df: DataFrame) -> DataFrame:
-    """" This function gets a Dataframe as input.
+def create_indirect_links_recursive(link_table: DataFrame) -> DataFrame:
+    """ " This function gets a Dataframe as input.
 
-        The function calls create_indirect_links_once()
-        until no more new lines are added to the Dataframe.
+    The function calls create_indirect_links_once()
+    until no more new lines are added to the Dataframe.
     """
 
-    df_copy = df.copy()
+    df_copy = link_table.copy()
 
     # As long as new lines are added to the Dataframe continue looking for indirect links
     while True:
