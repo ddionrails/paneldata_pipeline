@@ -10,7 +10,7 @@ import pandas
 
 def get_answers(
     tables: Dict[str, pandas.DataFrame]
-) -> OrderedDict[Tuple[str, str], List[pandas.Series]]:
+) -> "OrderedDict[Tuple[str, str], List[pandas.Series]]":
     answers: OrderedDict[Tuple[str, str], List[pandas.Series]] = OrderedDict()
     for _, answer in tables["answers"].iterrows():
         answer = OrderedDict(answer.dropna())
