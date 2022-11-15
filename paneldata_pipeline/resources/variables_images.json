@@ -27,7 +27,7 @@
       },
       {
         "name": "variable",
-        "title": "Foreign key to a Variable",
+        "title": "Name of the Variable",
         "type": "string",
         "format": "default",
         "constraints": {
@@ -36,35 +36,22 @@
         }
       },
       {
-        "name": "concept",
-        "title": "Foreign key to Concept",
+        "name": "url",
+        "title": "url to the english image",
         "type": "string",
         "format": "default"
       },
       {
-        "name": "url",
-        "title": "Url to the image file",
-        "type": "string",
-        "format": "default",
-        "constraints": {
-          "required": true,
-          "maxLength": 255
-        }
-      },
-      {
         "name": "url_de",
-        "title": "Url to the german image file",
+        "title": "url to the german image",
         "type": "string",
-        "format": "default",
-        "constraints": {
-          "required": false
-        }
+        "format": "default"
       }
     ],
     "primaryKey": [
       "study",
       "dataset",
-      "name"
+      "variable"
     ],
     "missingValues": [
       ""
