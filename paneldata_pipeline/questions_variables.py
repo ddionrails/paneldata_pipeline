@@ -90,7 +90,7 @@ def create_questions_from_generations(version: str, input_folder: Path) -> DataF
     logical_variables = read_csv(input_folder.joinpath("logical_variables.csv"))
 
     logical_variables = logical_variables[
-        ["study", "dataset", "variable", "instrument", "question"]
+        ["study", "dataset", "variable", "instrument", "question", "item"]
     ]
 
     # There are indirect links between variables and questions
@@ -123,6 +123,7 @@ def create_questions_from_generations(version: str, input_folder: Path) -> DataF
         "output_variable",
         "instrument",
         "question",
+        "item",
     ]
     indirect_relations = indirect_relations[wanted_columns]
 
@@ -132,6 +133,7 @@ def create_questions_from_generations(version: str, input_folder: Path) -> DataF
         "output_variable": "variable",
         "questionnaire": "instrument",
         "question": "question",
+        "item": "item",
     }
 
     indirect_relations.rename(columns=column_filter, inplace=True)
@@ -140,7 +142,7 @@ def create_questions_from_generations(version: str, input_folder: Path) -> DataF
     questions_variables.dropna(inplace=True)
     questions_variables.drop_duplicates(inplace=True)
 
-    sort_columns = ["study", "dataset", "variable", "instrument", "question"]
+    sort_columns = ["study", "dataset", "variable", "instrument", "question", "item"]
 
     questions_variables.sort_values(by=sort_columns, inplace=True)
 
