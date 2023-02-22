@@ -74,6 +74,10 @@
         "format": "default"
       }
     ],
+    "primaryKey": [
+      "study",
+      "name"
+    ],
     "missingValues": [
       ""
     ]
