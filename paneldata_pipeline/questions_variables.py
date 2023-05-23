@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pandas
 from pandas import DataFrame, read_csv
 
 
@@ -57,7 +58,11 @@ def create_indirect_links_once(link_table: DataFrame) -> DataFrame:
     temp.rename(columns=rename_columns, inplace=True)
 
     # add new rows to the original Dataframe, dropping duplicates
-    return link_table.append(temp).drop_duplicates().reset_index(drop=True)
+    return (
+        pandas.concat([link_table, temp], ignore_index=True)
+        .drop_duplicates()
+        .reset_index(drop=True)
+    )
 
 
 def create_indirect_links_recursive(link_table: DataFrame) -> DataFrame:
@@ -82,7 +87,6 @@ def create_indirect_links_recursive(link_table: DataFrame) -> DataFrame:
 
 
 def create_questions_from_generations(version: str, input_folder: Path) -> DataFrame:
-
     # The file "logical_variables.csv" contains direct links
     # between variables and questions
     # variable1 <relates to> question1
@@ -138,7 +142,7 @@ def create_questions_from_generations(version: str, input_folder: Path) -> DataF
 
     indirect_relations.rename(columns=column_filter, inplace=True)
 
-    questions_variables = logical_variables.append(indirect_relations)
+    questions_variables = pandas.concat([logical_variables, indirect_relations])
     questions_variables.dropna(inplace=True)
     questions_variables.drop_duplicates(inplace=True)
 

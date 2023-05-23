@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, TypedDict, Union
 
 import pandas
 
-LANGUAGES = dict(en="", de="_de")
+LANGUAGES = {"en": "", "de": "_de"}
 
 
 class LeafNode(TypedDict):
@@ -23,7 +23,6 @@ class Node(LeafNode):
 
 
 class Topic:
-
     all_objects: List[Any] = []
 
     def __init__(
@@ -39,9 +38,12 @@ class Topic:
     def to_dict(self) -> Node:
         children: List[Union[Node, LeafNode]] = [x.to_dict() for x in self.children]
         children += [x.to_dict() for x in self.concepts]
-        return dict(
-            title=self.label, key=f"topic_{self.name}", type="topic", children=children
-        )
+        return {
+            "title": self.label,
+            "key": f"topic_{self.name}",
+            "type": "topic",
+            "children": children,
+        }
 
     @classmethod
     def get_by_name(cls, name: Optional[str]) -> Optional[Any]:
@@ -67,7 +69,6 @@ class Topic:
 
 
 class Concept:
-
     all_objects: List[Any] = []
 
     def __init__(self, name: str, topic_name: str, label: str):
@@ -77,7 +78,7 @@ class Concept:
         self.all_objects.append(self)
 
     def to_dict(self) -> LeafNode:
-        return dict(title=self.label, key=f"concept_{self.name}", type="concept")
+        return {"title": self.label, "key": f"concept_{self.name}", "type": "concept"}
 
     @classmethod
     def add_concepts_to_topics(cls) -> None:
@@ -102,7 +103,6 @@ class TopicParser:
         output_folder: Path,
         languages: Optional[List[str]] = None,
     ):
-
         topics_input_csv = input_folder.joinpath("topics.csv")
         concepts_input_csv = input_folder.joinpath("concepts.csv")
         self.output_json = output_folder.joinpath("topics.json")
@@ -122,7 +122,7 @@ class TopicParser:
     def _create_json(self) -> List[Dict[str, Any]]:
         result = []
         for language in self.languages:
-            result.append(dict(language=language, topics=self.to_dict(language)))
+            result.append({"language": language, "topics": self.to_dict(language)})
         return result
 
     def to_dict(self, language: str) -> List[Node]:
@@ -131,9 +131,12 @@ class TopicParser:
                 parent_name = None
             else:
                 parent_name = row.get("parent")
+            label = row.get("label" + LANGUAGES[language])
+            if label in ["nan", ""] or not label:
+                label = row.get("name")
             Topic(
                 name=row.get("name"),
-                label=row.get("label" + LANGUAGES[language], row.get("name")),
+                label=label,
                 parent_name=parent_name,
             )
         for row in self.concepts_data.to_dict("records"):

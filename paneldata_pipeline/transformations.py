@@ -17,7 +17,6 @@ def preprocess_transformations(
     output_folder: Path = Path(),
     verbose: bool = False,
 ) -> DataFrame:
-
     if input_folder == Path():
         input_folder = Path("metadata/").resolve()
     if output_folder == Path():
@@ -112,7 +111,7 @@ def preprocess_transformations(
         transformations["compare"].isin(variables["compare"])
     ]
     # drop helper column
-    transformations.drop("compare", 1, inplace=True)
+    transformations.drop(["compare"], axis=1, inplace=True)
     if verbose:
         print(generations_with_indirect_links.shape)
         print(generations_with_indirect_links.head())
