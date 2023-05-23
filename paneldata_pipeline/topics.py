@@ -141,6 +141,9 @@ class TopicParser:
 
             if not label or label in ["nan", ""]:
                 label = row.get("label")
+            if not label:
+                label = row.get("name")
+
             Topic(
                 name=row.get("name"),
                 label=label,
