@@ -30,7 +30,10 @@ class Topic:
     ):
         self.name = name
         self.parent_name = parent_name
-        self.label = label if str(label) != "nan" else ""
+        if str(label) != "nan" and str(label) != "":
+            self.label = label
+        else:
+            self.label = name
         self.children: List[Topic] = []
         self.concepts: List[Concept] = []
         self.all_objects.append(self)
@@ -132,7 +135,7 @@ class TopicParser:
             else:
                 parent_name = row.get("parent")
             label = row.get("label" + LANGUAGES[language])
-            if label in ["nan", ""] or not label:
+            if not label or label in ["nan", ""]:
                 label = row.get("name")
             Topic(
                 name=row.get("name"),
