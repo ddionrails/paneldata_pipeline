@@ -135,8 +135,12 @@ class TopicParser:
             else:
                 parent_name = row.get("parent")
             label = row.get("label" + LANGUAGES[language])
+
+            if not (str(label) != "nan" and str(label) != ""):
+                label = row.get("label")
+
             if not label or label in ["nan", ""]:
-                label = row.get("name")
+                label = row.get("label")
             Topic(
                 name=row.get("name"),
                 label=label,
