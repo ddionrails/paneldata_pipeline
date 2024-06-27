@@ -94,11 +94,11 @@ def _print_error_table(errors: List[FrictionlessError]) -> None:
     missing_labels = False
     error_message_rows = []
     for error in errors:
-        if error.code == "missing-label":  # type: ignore
+        if error.type == "missing-label":
             missing_labels = True
-        if error.code == "missing-cell" and missing_labels:  # type: ignore
+        if error.type == "missing-cell" and missing_labels:
             continue
-        error_message_rows.append([error.code, error.message])  # type: ignore
+        error_message_rows.append([error.type, error.message])
     print(tabulate(error_message_rows, headers=["code", "message"], tablefmt="grid"))
 
 
