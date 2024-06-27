@@ -17,6 +17,7 @@ paneldata-pipeline = {editable = true, path = "."}
 
 [packages]
 pandas = "*"
+numpy = "<2.0.0"
 frictionless = "*"
 tabulate = "*"
 gitpython = "<=3.1.30"
