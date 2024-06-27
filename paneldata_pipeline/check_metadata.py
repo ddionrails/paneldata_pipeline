@@ -1,4 +1,5 @@
 """ Entrypoint and functions for cli to test relations between metadata files."""
+
 import argparse
 import json
 import logging
@@ -11,7 +12,7 @@ from pathlib import Path
 from typing import Any, Generator, List, TypedDict
 
 from frictionless import validate
-from frictionless.error import Error as FrictionlessError
+from frictionless.error import Error as FrictionlessError  # type: ignore
 from frictionless.errors.label import IncorrectLabelError, MissingLabelError
 from tabulate import tabulate
 
@@ -75,7 +76,7 @@ def main() -> None:
                 print("\n" * 2)
             print(
                 tabulate(
-                    [[f"Checking: {metadata_location / task.resource['path']}"]],
+                    [[f"Checking: {metadata_location / task.place}"]],
                     tablefmt="grid",
                 )
             )
@@ -93,19 +94,17 @@ def _print_error_table(errors: List[FrictionlessError]) -> None:
     missing_labels = False
     error_message_rows = []
     for error in errors:
-        if error.code == "missing-label":
+        if error.code == "missing-label":  # type: ignore
             missing_labels = True
-        if error.code == "missing-cell" and missing_labels:
+        if error.code == "missing-cell" and missing_labels:  # type: ignore
             continue
-        error_message_rows.append([error.code, error.message])
+        error_message_rows.append([error.code, error.message])  # type: ignore
     print(tabulate(error_message_rows, headers=["code", "message"], tablefmt="grid"))
 
 
 def _get_path_to_resources() -> Generator[Path, None, None]:
-
     with resources.path("paneldata_pipeline", "resources") as resource_folder:
-        for resource in resource_folder.glob("*.json"):
-            yield resource
+        yield from resource_folder.glob("*.json")
 
 
 def parse_arguments() -> argparse.Namespace:
