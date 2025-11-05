@@ -1,4 +1,5 @@
 """ Test  """
+
 import json
 import sys
 from csv import DictReader
@@ -99,7 +100,10 @@ class TestCheckRelations(TestCase):
         ) as questions_file:
             questions_file.write(incorrect_row)
         result = relations_exist(target=to_relation, origins=[from_relation])
-        self.assertIn(("Relation target in line 4 does not exist."), self.caplog.text)
+        self.assertIn(
+            ("Relation target ['test-study', 'none-existent'] in row 4 does not exist."),
+            self.caplog.text,
+        )
         self.assertFalse(result)
 
     def test_relation_with_multiple_origins(self) -> None:

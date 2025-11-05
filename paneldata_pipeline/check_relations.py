@@ -1,4 +1,5 @@
 """ Entrypoint and functions for cli to test relations between metadata files."""
+
 import argparse
 import logging
 import sys
@@ -136,11 +137,11 @@ def relations_exist(target: RelationOrigin, origins: List[RelationOrigin]) -> bo
         with open(origin["file"], "r", encoding="utf8") as _file:
             _reader = DictReader(_file)
             LOGGER.info(
-                "Checking relation to %s:%s from %s:%s",
-                target["file"].name,
-                target["fields"],
+                "Checking relation from file %s:%s to file %s:%s",
                 origin["file"].name,
                 origin["fields"],
+                target["file"].name,
+                target["fields"],
             )
             for row_number, row in enumerate(_reader, start=2):
                 _keypair = []
@@ -150,8 +151,14 @@ def relations_exist(target: RelationOrigin, origins: List[RelationOrigin]) -> bo
                 if "" in _keypair:
                     continue
                 if tuple(_keypair) not in keypairs:
-                    LOGGER.info("Relation target in line %d does not exist.", row_number)
+                    LOGGER.info(
+                        "Relation target %s in row %d does not exist.",
+                        _keypair,
+                        row_number,
+                    )
                     all_relations_exist = False
+            LOGGER.info("#" * 20)
+            LOGGER.info("")
 
     return all_relations_exist
 
