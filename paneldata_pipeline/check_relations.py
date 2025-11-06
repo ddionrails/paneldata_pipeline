@@ -48,7 +48,8 @@ def main() -> None:
         sys.exit(1)
 
     all_relations_exist = set()
-    all_relations_exist.add(check_cat_question_items(arguments.input_folder))
+    if not arguments.skip_answer_list_test:
+        all_relations_exist.add(check_cat_question_items(arguments.input_folder))
 
     for relation in relations:
         relation["file"] = arguments.input_folder.joinpath(relation["file"])
@@ -63,7 +64,8 @@ def main() -> None:
             all_relations_exist.add(relations_exist(relation, relation["relations_from"]))
         except FileNotFoundError as error:
             LOGGER.debug(
-                "A file from the config is not present in the input directory: %s", error
+                "A file from the config is not present in the input directory: %s",
+                error,
             )
 
     if False in all_relations_exist:
@@ -103,7 +105,10 @@ def parse_arguments() -> argparse.Namespace:
     """Set up arguments and parse them."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-i", "--input-folder", help="Path to the input metadata files.", type=_full_path
+        "-i",
+        "--input-folder",
+        help="Path to the input metadata files.",
+        type=_full_path,
     )
     parser.add_argument(
         "-r",
@@ -112,7 +117,18 @@ def parse_arguments() -> argparse.Namespace:
         type=_full_path,
     )
     parser.add_argument(
-        "-d", "--debug", help="Activate debug output", action="store_true", default=False
+        "-d",
+        "--debug",
+        help="Activate debug output",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "-s",
+        "--skip-answer-list-test",
+        help="Skip separate answer_list column test",
+        action="store_true",
+        default=False,
     )
     if len(sys.argv) == 1:
         parser.print_help()
